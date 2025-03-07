@@ -5,7 +5,6 @@
 package irrgarten;
 
 /**
- *
  * @author juan
  */
 
@@ -60,7 +59,7 @@ public class Dice {
         return generator.nextFloat(competence);
     }
     public static boolean discardElement(int uses_left){
-        float prob= (MAX_USES-uses_left)/MAX_USES;
+        float prob= (MAX_USES-uses_left)/(float)MAX_USES;
         return generator.nextFloat()<prob;
     }
 }
