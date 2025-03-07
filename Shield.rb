@@ -1,8 +1,8 @@
-require_relative 'Dice
-'
+require_relative 'Dice'
+
 module Irrgarten
   class Shield
-    def initializer(prote,us)
+    def initialize(prote,us)
       @protection=prote
       @uses=us
     end

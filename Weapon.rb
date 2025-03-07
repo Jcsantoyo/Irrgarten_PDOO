@@ -2,7 +2,7 @@ require_relative 'Dice'
 
 module Irrgarten
   class Weapon
-    def initializer(pow,us)
+    def initialize(pow,us)
       @power=pow
       @uses=us
     end
