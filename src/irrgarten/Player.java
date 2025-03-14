@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package irrgarten;
 
 import java.util.ArrayList;
@@ -24,6 +21,7 @@ public class Player {
     private int row;
     private int col;
     private int consecutiveHits=0;
+    
     private ArrayList<Weapon> weapons;
     private ArrayList<Shield> shields;
     
@@ -80,16 +78,32 @@ public class Player {
         throw new UnsupportedOperationException();
     }
     
-    //revisar si es necesario mostrar consecutivehits, armas y escudos
+    
     public String toString(){
         String nombre= "Nombre: "+name;
-        String inteligencia= "Inteligencia: "+ String.valueOf(intelligence);
+        String inteligencia= "Int: "+ String.valueOf(intelligence);
         String fuerza= "Fuerza: " + String.valueOf(strength);
         String vida= "Vida: " + String.valueOf(health);
         String posicion = "Casilla: ("+String.valueOf(row)+", "
                         +String.valueOf(col)+")";
-        
-        return (nombre+'\n'+inteligencia+'\n'+fuerza+'\n'+vida+'\n'+posicion);
+        String hits= "Hits: " + String.valueOf(consecutiveHits);
+        String armas="Armas: ";
+        for(int i=0; i<weapons.size();++i){
+            armas+=weapons.get(i).toString();
+            if(i!=weapons.size()-1){
+                armas += ", ";
+            }
+        }
+        String escudos="Escudos: ";
+        for(int i=0; i<shields.size();++i){
+            armas+=shields.get(i).toString();
+            if(i!=shields.size()-1){
+                armas += ", ";
+            }
+        }
+        return (nombre+"  "+inteligencia+"  "+fuerza+"  "+vida+"  "+posicion+
+                "  "+hits+"  "+armas+"  "+escudos);
+                
     }
     
     private void receiveWeapon(Weapon w){
