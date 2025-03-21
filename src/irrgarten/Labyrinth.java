@@ -8,6 +8,7 @@ import java.util.ArrayList;
  * @author juan
  */
 public class Labyrinth {
+    
     private static final char BLOCK_CHAR='X';
     private static final char EMPTY_CHAR='-';
     private static final char MONSTER_CHAR='M';
@@ -15,6 +16,7 @@ public class Labyrinth {
     private static final char EXIT_CHAR='E';
     private static final int ROW=0;
     private static final int COL=1;
+    private static final int DIM=2;
     
     private int nRows;
     private int nCols;
@@ -52,6 +54,7 @@ public class Labyrinth {
         return (players[exitRow][exitCol]!=null);
     }
     
+    @Override
     //Por implementar
     public String toString(){
         return "";
@@ -110,40 +113,36 @@ public class Labyrinth {
         }
     }
     
-    //Redundante DIM? para evitar no magico
-    private ArrayList<Integer> dir2Pos(int row, int col, Directions direction){
-        int DIM=2;
-        ArrayList<Integer> pos = new ArrayList<>(DIM);
+    private int[] dir2Pos(int row, int col, Directions direction){
+        int pos[] = new int[DIM];
         switch(direction){
             case UP:
-                pos.add(row+1);
-                pos.add(col);
+                --row;
                 break;
             case DOWN:
-                pos.add(row-1);
-                pos.add(col);
+                ++row;
                 break;
             case LEFT:
-                pos.add(row);
-                pos.add(col-1);
+                --col;
                 break;
             case RIGHT:
-                pos.add(row);
-                pos.add(col+1);
+                ++col;
                 break;
         }
+        pos[ROW]=row;
+        pos[COL]=col;
+        
         return pos;
     }
     
-    private ArrayList<Integer> randomEmptyPos(){
-        int DIM=2;
-        ArrayList<Integer> pos = new ArrayList<>(DIM);
-        pos.add(Dice.randomPos(nRows));
-        pos.add(Dice.randomPos(nCols));
+    private int[] randomEmptyPos(){
+        int pos[] = new int[DIM];
+        pos[ROW]=Dice.randomPos(nRows);
+        pos[COL]=Dice.randomPos(nCols);
         
-        while(!emptyPos(pos.get(0),pos.get(1))){
-            pos.add(Dice.randomPos(nRows));
-            pos.add(Dice.randomPos(nCols));
+        while(!emptyPos(pos[ROW],pos[COL])){
+            pos[ROW]=Dice.randomPos(nRows);
+            pos[COL]=Dice.randomPos(nCols);
         }
         return pos;
     }

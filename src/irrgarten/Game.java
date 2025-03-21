@@ -8,7 +8,8 @@ import java.util.ArrayList;
  */
 public class Game {
     private static final int MAX_ROUNDS=10;
-    
+  
+            
     private int currentPlayerIndex;
     private String log;
     
@@ -18,17 +19,19 @@ public class Game {
     private Player currentPlayer;
     
     public Game (int nplayers){
+        
         players= new ArrayList<>();
         for(int i=0; i<nplayers;++i){
             players.add(new Player((char)i, Dice.randomIntelligence(),Dice.randomStrength()));
         }
+        
         currentPlayerIndex=Dice.whoStarts(nplayers);
         currentPlayer=players.get(currentPlayerIndex);
         monsters=new ArrayList<>();
-        //lab=new Labyrinth(); Atrinutos?
+        
         log=" ";
-        //Configuración del laberinto?
-        lab.spreadPlayers(players);
+        
+        configureLabyrinth();
     }
     
     public boolean finished(){
@@ -40,15 +43,43 @@ public class Game {
     }
     
     public GameState getGameState(){
-        //return GameState(Atributos?)
+        
+        String player_str="";
+        
+        for (int i=0; i<players.size();++i){
+            player_str+=players.get(i).toString();
+        }
+        
+        String monster_str="";
+        
+        for (int i=0; i<monsters.size();++i){
+            monster_str=monsters.get(i).toString();
+        }
+        
+        return new GameState(
+               lab.toString(),
+               player_str,
+               monster_str,
+               currentPlayerIndex,
+               lab.haveAWinner(),
+               ""
+                );    
     }
     
     private void configureLabyrinth(){
+        lab=new Labyrinth(5,5,Dice.randomPos(5),Dice.randomPos(5)); 
         
+        //Configuración del laberinto como yo quiera
+        lab.spreadPlayers(players);
     }
     
     private void nextPlayer(){
+        if(currentPlayerIndex==players.size()-1)
+            currentPlayerIndex=0;
+        else
+            ++currentPlayerIndex;
         
+        currentPlayer=players.get(currentPlayerIndex);
     }
     
     private Directions actualDirection(Directions preferredDirection){
