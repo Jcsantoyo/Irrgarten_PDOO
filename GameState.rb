@@ -1,4 +1,5 @@
 module Irrgarten
+  
   class GameState
 
     def initializer(lab,pla,mons,cpl,win,lg)
