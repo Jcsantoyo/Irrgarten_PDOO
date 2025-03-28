@@ -43,6 +43,7 @@ public class Labyrinth {
                 squareStates[i][j]=EMPTY_CHAR;
             }
         }
+        squareStates[exitRow][exitCol]=EXIT_CHAR;
         
     }
     
