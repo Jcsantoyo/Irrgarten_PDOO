@@ -1,4 +1,3 @@
-require_relative 'Dice' #Para newWeapon y newShield
 require_relative 'Weapon' #Para contenedores de Weapon
 require_relative 'Shield' #Para contenedores de Shield
 require_relative 'Directions' #Para move
@@ -27,6 +26,10 @@ module Irrgarten
       @shields=[]
     end
 
+    attr_reader :row
+    attr_reader :col
+    attr_reader :number
+
     def resurrect
       @weapons.clear
       @shields.clear
@@ -34,15 +37,15 @@ module Irrgarten
       @consecutive_hits=0
     end
 
-    def get_row
+    def row
       @row
     end
 
-    def get_col
+    def col
       @col
     end
 
-    def get_number
+    def number
       @number
     end
 

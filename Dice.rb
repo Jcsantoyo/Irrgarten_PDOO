@@ -1,14 +1,15 @@
 module Irrgarten
   class Dice
-    @@max_uses = 5
-    @@max_intelligence = 10.0
-    @@max_strength = 10.0
-    @@resurrect_prob = 0.3
-    @@weapons_reward = 2
-    @@shields_reward = 3
-    @@health_reward = 5
-    @@max_attack = 3
-    @@max_shield = 2
+    @@MAX_USES = 5
+    @@MAX_INTELLIGENCE = 10.0
+    @@MAX_STRENGTH = 10.0
+    @@RESURRECT_PROB = 0.3
+    @@WEAPONS_REWARD = 2
+    @@SHIELDS_REWARD = 3
+    @@HEALTH_REWARD = 5
+    @@MAX_ATTACK = 3
+    @@MAX_SHIELD = 2
+
     @@generator = Random.new
   
     def self.random_pos(max)
@@ -20,39 +21,39 @@ module Irrgarten
     end
   
     def self.random_intelligence
-      @@generator.rand(@@max_intelligence)
+      @@generator.rand(@@MAX_INTELLIGENCE)
     end
   
     def self.random_strength
-      @@generator.rand(@@max_strength)
+      @@generator.rand(@@MAX_STRENGTH)
     end
   
     def self.resurrect_player
-      @@generator.rand < @@resurrect_prob
+      @@generator.rand < @@RESURRECT_PROB
     end
   
     def self.weapons_reward
-      @@generator.rand(@@weapons_reward + 1)
+      @@generator.rand(@@WEAPONS_REWARD + 1)
     end
   
     def self.shields_reward
-      @@generator.rand(@@shields_reward + 1)
+      @@generator.rand(@@SHIELDS_REWARD + 1)
     end
   
     def self.health_reward
-      @@generator.rand(@@health_reward + 1)
+      @@generator.rand(@@HEALTH_REWARD + 1)
     end
   
     def self.weapon_power
-      @@generator.rand(@@max_attack)
+      @@generator.rand(@@MAX_ATTACK)
     end
   
     def self.shield_power
-      @@generator.rand(@@max_shield)
+      @@generator.rand(@@MAX_SHIELD)
     end
   
     def self.uses_left
-      @@generator.rand(@@max_uses + 1)
+      @@generator.rand(@@MAX_USES + 1)
     end
   
     def self.intensity(competence)
@@ -60,7 +61,7 @@ module Irrgarten
     end
   
     def self.discard_element(uses_left)
-      prob = (@@max_uses - uses_left) / @@max_uses.to_f
+      prob = (@@MAX_USES - uses_left) / @@MAX_USES.to_f
       @@generator.rand < prob
     end
   end

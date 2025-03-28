@@ -46,6 +46,10 @@ module Irrgarten
     end
 
   end
+
+
+
+  
   # Bloque de prueba que se ejecuta solo si este archivo es el programa principal
     if __FILE__ == $0
       # Crear una instancia del monstruo

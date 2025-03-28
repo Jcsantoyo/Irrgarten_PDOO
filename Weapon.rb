@@ -7,7 +7,7 @@ module Irrgarten
       @uses=us
     end
 
-    def attack()
+    def attack
       attack=@power
       if @uses > 0
         @uses-=1
@@ -20,7 +20,7 @@ module Irrgarten
     def to_s
       "W[#{@power}, #{@uses}]"
     end
-    def discard()
+    def discard
       return Dice.discard_element(@uses)
     end
   end

@@ -7,7 +7,7 @@ module Irrgarten
       @uses=us
     end
 
-    def protect()
+    def protect
       prot=@protection
       if @uses > 0
         @uses-=1
@@ -21,7 +21,7 @@ module Irrgarten
       "W[#{@protection}, #{@uses}]"
     end
   end
-  def discard()
+  def discard
     return Dice.discard_element(@uses)
   end
 end
