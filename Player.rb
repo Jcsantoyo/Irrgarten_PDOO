@@ -26,10 +26,6 @@ module Irrgarten
       @shields=[]
     end
 
-    attr_reader :row
-    attr_reader :col
-    attr_reader :number
-
     def resurrect
       @weapons.clear
       @shields.clear
@@ -84,12 +80,46 @@ module Irrgarten
       "#{nombre}  #{inteligencia}  #{fuerza}  #{vida}  #{posicion}  #{hits}  #{armas}  #{escudos}"
     end
 
-    private
+    def receive_reward
 
-    def receive_weapon
+      w_reward=Dice.weapons_reward
+      s_reward=Dice.shields_reward
+
+      w_reward.times do
+        wnew=Weapon.new
+        receive_weapon(wnew)
+      end
+
+      s_reward.times do
+        snew=Shield.new
+        receive_shield(snew)
+      end
+      extra_health=Dice.health_reward
+      @health+=extra_health
     end
 
-    def receive_shield
+    private
+
+    def receive_weapon(w)
+      @weapons.each do |wi|
+        if(wi.discard)
+          @weapons.discard(wi)
+        end
+      end
+      if(@weapons.size<@@MAX_WEAPONS)
+        @weapons.push(wi)
+      end
+    end
+
+    def receive_shield(s)
+      @shields.each do |si|
+        if(si.discard)
+          @shields.discard(si)
+        end
+      end
+      if(@shields.size<@@MAX_SHIELDS)
+        @shields.push(s)
+      end
     end
 
     def new_weapon
@@ -121,6 +151,19 @@ module Irrgarten
     end
 
     def manage_hit(received_attack)
+      defense=defensive_energy()
+      lose=false
+      if(defense<received_attack)
+        got_wounded()
+        inc_consecutive_hits()
+      else
+        reset_hits()
+      end
+      if(consecutive_hits == @@HITS2LOSE || dead())
+        reset_hits
+        lose=true
+      end
+      return lose
     end
 
     def reset_hits

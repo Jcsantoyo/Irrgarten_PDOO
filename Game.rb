@@ -27,7 +27,7 @@ module Irrgarten
     end
 
     private
-    
+
     def configure_labyrinth
       @lab=Labyrinth.new(5,5,Dice.random_pos(5),Dice.random_pos(5))
       lab.spread_players(@players)
@@ -56,7 +56,7 @@ module Irrgarten
     end
 
     def log_player_won
-      @log += "- Player #{@current_player_index} won the fight.\n"
+        @log += "- Player #{@current_player_index} won the fight.\n"
     end
 
     def log_monster_won
