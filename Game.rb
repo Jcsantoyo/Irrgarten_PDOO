@@ -26,6 +26,8 @@ module Irrgarten
     def get_game_state
     end
 
+    private
+    
     def configure_labyrinth
       @lab=Labyrinth.new(5,5,Dice.random_pos(5),Dice.random_pos(5))
       lab.spread_players(@players)

@@ -84,6 +84,8 @@ module Irrgarten
       "#{nombre}  #{inteligencia}  #{fuerza}  #{vida}  #{posicion}  #{hits}  #{armas}  #{escudos}"
     end
 
+    private
+
     def receive_weapon
     end
 

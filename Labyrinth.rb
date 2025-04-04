@@ -55,6 +55,8 @@ module Irrgarten
     def valid_moves(row, col)
     end
 
+    private
+
     def pos_ok(row, col)
       return (row>=@@ROW && row<@n_rows && col>=@@COL && col<@n_cols);
     end
@@ -125,4 +127,4 @@ module Irrgarten
   
 end
 
-#Revisar visibilidad
+

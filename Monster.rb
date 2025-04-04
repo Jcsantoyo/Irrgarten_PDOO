@@ -40,7 +40,7 @@ module Irrgarten
       
       return (nombre+"\n"+inteligencia+"\n"+fuerza+"\n"+vida+"\n"+posicion);
     end
-     
+    private
     def got_wounded
       @health-=1
     end
