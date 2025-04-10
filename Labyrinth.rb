@@ -15,6 +15,8 @@ module Irrgarten
     @@COL=1
     @@DIM=2
 
+    @@NO_POS=-1
+
     def initialize(nRows, nCols, exitRow, exitCol)
       @n_rows = n_rows.to_i
       @n_cols = n_cols.to_i
@@ -23,12 +25,16 @@ module Irrgarten
 
       @monsters  = Array.new(@n_rows) {Array.new(@n_cols)} 
       @players   = Array.new(@n_rows) {Array.new(@n_cols)} 
-      @squareStates = Array.new(@n_rows) {Array.new(@n_cols, @@EMPTY_CHAR)} 
+      @square_states = Array.new(@n_rows) {Array.new(@n_cols, @@EMPTY_CHAR)} 
 
       @square_states[@exit_row][@exit_col] = @@EXIT_CHAR
     end
 
     def spread_players(players)
+      players.each do |p|
+        pos=self.random_empty_pos
+        self.put_player_2d(@@NO_POS,@@NO_POS,pos[@@ROW],pos[@@COL],p)
+      end
     end
 
     def have_a_winner
@@ -47,12 +53,56 @@ module Irrgarten
     end
 
     def put_player(direction, player)
+      old_row=player.row
+      old_col=player.col
+
+      new_pos=dir_2_pos(old_row,old_col,direction)
+
+      monster=put_player_2d(old_row,old_col,new_pos[@@ROW],new_pos[@@COL], player)
+
+      return monster
     end
 
     def add_block(orientation, start_row,start_col,length)
+      if(orientation==Orientation::VERTICAL)
+        inc_row=1
+        inc_col=0
+      else
+        inc_row=0
+        inc_col=1
+      end
+      row=start_row
+      col=start_col
+
+      if((pos_ok(row,col)) && (empty_pos(row,col))&& (length>0))
+        @square_states[row][col]
+        length-=1
+        row+=inc_row
+        col+=inc_col
+      end
+      
     end
 
     def valid_moves(row, col)
+      output=Array.new
+      if(can_step_on(row+1,col))
+        output.push(Directions::DOWN)
+      end
+
+      if(can_step_on(row-1,col))
+        output.push(Directions::UP)
+      end
+
+      if(can_step_on(row,col+1))
+        output.push(Directions::RIGHT)
+      end
+
+      if(can_step_on(row, col-1))
+        output.push(Directions::LEFT)
+      end
+      
+      return output
+
     end
 
     private
@@ -122,8 +172,33 @@ module Irrgarten
       return pos
     end
 
-    def put_player_2d
+    def put_player_2d(old_row,old_col,row,col,player)
+      output=nil
+
+      if(can_step_on(row,col))
+        if(pos_ok(old_row,old_col))
+          p = @players[old_row][old_col]
+          if (p==player)
+            update_old_pos(old_row,old_col)
+            @players[old_row][old_col]=nil
+          end
+        end
+
+        monster_pos=monster_pos(row,col)
+
+        if(monster_pos)
+          @square_states=@@COMBAT_CHAR
+          output=@monsters[row][col]
+        else
+          number = player.number
+          @square_states[row][col]= number
+        end
+
+        @players[row][col]=player
+        player.set_pos(row,col)
     end
+    return output
+  end
   
 end
 
