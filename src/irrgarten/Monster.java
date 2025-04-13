@@ -23,19 +23,39 @@ public class Monster {
         health=INITIAL_HEALTH;
         setPos(NO_POS,NO_POS);
     }
+    
     public boolean dead(){
         return (health==0);
     }
+    
+    
     public float attack(){
         return Dice.intensity(strength);
     }
+    
+    
     public boolean defend(float receivedAttack){
-        throw new UnsupportedOperationException();
+        boolean isDead=dead();
+        
+        if(!isDead){
+            float defensiveEnergy=Dice.intensity(intelligence);
+            
+            if(defensiveEnergy < receivedAttack){
+                gotWounded();
+                isDead=dead();
+            }
+        }
+        return isDead;
+        
     }
+    
+    
     public void setPos(int row,int col){
         this.row=row;
         this.col=col;
     }
+    
+    
     @Override
     public String toString(){
         String nombre= "Nombre: "+name;
