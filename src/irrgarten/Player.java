@@ -30,9 +30,12 @@ public class Player {
         name="Player #"+number;
         this.number=number;
         this.intelligence=intelligence;
+        
         this.strength=strength;
         health=INITIAL_HEALTH;
-        setPos(NO_POS,NO_POS);
+        row=NO_POS;
+        col=NO_POS;
+        
         weapons=new ArrayList<>();
         shields=new ArrayList<>();
     }
@@ -41,7 +44,7 @@ public class Player {
        weapons.clear();
        shields.clear();
        health=INITIAL_HEALTH;
-       consecutiveHits=0;
+       resetHits();
     }
     public int getRow(){
         return row;
@@ -66,12 +69,15 @@ public class Player {
         int size=validMoves.size();
         boolean contained=validMoves.contains(direction);
         
+        Directions output;
+                
         if((size>0) && (!contained)){
-            return validMoves.get(0);
+            output= validMoves.get(0);
         }
         else{
-            return direction;
+            output= direction;
         }
+        return output;
     }
     
     public float attack(){
@@ -101,29 +107,34 @@ public class Player {
     
     
     public String toString(){
-        String nombre= "Nombre: "+name;
-        String inteligencia= "Int: "+ String.valueOf(intelligence);
-        String fuerza= "Fuerza: " + String.valueOf(strength);
-        String vida= "Vida: " + String.valueOf(health);
-        String posicion = "Casilla: ("+String.valueOf(row)+", "
-                        +String.valueOf(col)+")";
-        String hits= "Hits: " + String.valueOf(consecutiveHits);
-        String armas="Armas: ";
-        for(int i=0; i<weapons.size();++i){
-            armas+=weapons.get(i).toString();
-            if(i!=weapons.size()-1){
-                armas += ", ";
-            }
+        final String FORMAT = "%.6f";
+        String toReturn=this.name+"["+"i:"+ String.format(FORMAT, this.intelligence) + ", s:"+String.format(FORMAT, this.strength);
+        toReturn+=", h:"+String.format(FORMAT, this.health)+", p:("+this.row+", "+this.col+")]";
+        
+        // Bucles para mostrar con un formato determinado el array de
+        // armas y escudos del jugador
+        String toWeapons="[";
+        int tamWeapons=this.weapons.size();
+        for(int i=0; i<tamWeapons-1; i++){
+            toWeapons+=this.weapons.get(i).toString()+", ";
         }
-        String escudos="Escudos: ";
-        for(int i=0; i<shields.size();++i){
-            armas+=shields.get(i).toString();
-            if(i!=shields.size()-1){
-                armas += ", ";
-            }
+        if (tamWeapons>0)
+            toWeapons+=this.weapons.get(tamWeapons-1);
+        toWeapons+="]";
+        
+        String toShields="[";
+        int tamShields=this.shields.size();
+        for(int i=0; i<tamShields-1; i++){
+            toShields+=this.shields.get(i).toString()+", ";
         }
-        return (nombre+"  "+inteligencia+"  "+fuerza+"  "+vida+"  "+posicion+
-                "  "+hits+"  "+armas+"  "+escudos);
+        if (tamShields>0)
+            toShields+=this.shields.get(tamShields-1);
+        toShields+="]";
+        
+        // Definimos el formato final para el toString
+        toReturn+="w:" + toWeapons+", sh:"+toShields+" ]";
+        
+        return toReturn;
                 
     }
     
@@ -131,8 +142,11 @@ public class Player {
         
         for(int i=0; i<weapons.size();++i){
             Weapon wi=weapons.get(i);
-            if(wi.discard())
+            if(wi.discard()){
                 weapons.remove(wi);
+                i--;
+            }
+            
         }
         
         if(weapons.size()<MAX_WEAPONS)
@@ -145,8 +159,10 @@ public class Player {
         
         for(int i=0; i<shields.size();++i){
             Shield si=shields.get(i);
-            if(si.discard())
+            if(si.discard()){
                 shields.remove(si);
+                i--;
+            }
         }
         
         if(shields.size()<MAX_SHIELDS)
@@ -185,25 +201,24 @@ public class Player {
     
     private boolean manageHit(float receivedAttack){
         
-        boolean lose;
-        float defense=defensiveEnergy();
-        
-        if(defense<receivedAttack){
-            gotWounded();
-            incConsecutiveHits();
+        // Se contabiliza el ataque recibido
+        if (this.defensiveEnergy() < receivedAttack){
+            // El jugador no se ha defendido
+            this.gotWounded();
+            this.incConsecutiveHits();
         }
-        else
-            resetHits();
-        
-        if((consecutiveHits==HITS2LOSE)||(dead())){
-            resetHits();
-            lose=true;
+        else{
+            // El jugador se ha defendido
+            this.resetHits();
         }
-        else
-            lose=false;
-        
+
+        // Se comprueba si el jugador ha perdido
+        boolean lose = (this.consecutiveHits==Player.HITS2LOSE) || this.dead();
+
+        if (lose)   // Si ha perdido se resetea el contador de golpes consecutivos
+            resetHits();
+
         return lose;
-        
     }
     
     

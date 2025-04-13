@@ -18,20 +18,76 @@ public class Game {
     private ArrayList<Player> players;
     private Player currentPlayer;
     
+    // ---------------------- PERSONALIZACIÓN LABERINTO ---------------- //
+    // Tamaño del laberinto
+    /**
+     * Número de filas del laberinto.
+     */
+    private static final int ROWS=7;
+    /**
+     * Número de columnas del laberinto.
+     */
+    private static final int COLS=7;
+    
+
+    // Monstruos a incluir
+    /**
+     * Número de monstruos a incluir en el laberinto.
+     */
+    private static final int NUM_MONSTERS=5;
+    /**
+     * Posiciones iniciales de los monstruos en el laberinto.
+     */
+    private static final int [][] INIT_MONSTERS= {{0,0}, {1,1}, {2,2}, {3,3}, {0,3}};
+    
+    // Bloques a incluir
+    /**
+     * Número de bloques a incluir en el laberinto.
+     */
+    private static final int NUM_BLOCKS=4;
+    // Object es la clase raíz de la jerarquía de Java, por lo que todas las clases
+    // existentes se pueden definir como Object, haciendo después el
+    // correspondiente casting para usar el tipo de dato que queramos
+    // y sea el correcto con el que hay
+    /**
+     * Bloques iniciales a incluir en el laberinto donde el último parámetro indica la longitud.
+     */
+    private static final Object [][] INIT_BLOCKS=
+    { {Orientation.HORIZONTAL,0,0,3}, {Orientation.HORIZONTAL,3,3,5}, 
+      {Orientation.VERTICAL,  5,6,2}, {Orientation.VERTICAL,  6,5,3} };
+
+// ---------------------- PERSONALIZACIÓN LABERINTO ---------------- //
+    
     public Game (int nplayers){
         
-        players= new ArrayList<>();
-        for(int i=0; i<nplayers;++i){
-            players.add(new Player((char)i, Dice.randomIntelligence(),Dice.randomStrength()));
-        }
+        // Definimos casilla de salida
+        int exitRow=Dice.randomPos(ROWS);
+        int exitCol=Dice.randomPos(COLS);
+
+        // Inicializamos los vectores de jugadores y monstruos
+        this.players=new ArrayList<>();
+        this.monsters=new ArrayList<>();
         
-        currentPlayerIndex=Dice.whoStarts(nplayers);
-        currentPlayer=players.get(currentPlayerIndex);
-        monsters=new ArrayList<>();
+        // Creamos los nplayers y los introducimos en el vector de players
+        for(int i=0; i<nplayers; i++)
+            this.players.add(new Player(Character.forDigit(i, 10),
+                                    Dice.randomIntelligence(), Dice.randomStrength()));
         
-        log=" ";
+                
+        // Definimos el jugador que empezará, es decir, el currentPlayer
+        this.currentPlayerIndex=Dice.whoStarts(nplayers);
+        this.currentPlayer=this.players.get(this.currentPlayerIndex);
         
-        configureLabyrinth();
+        // Inicializamos la instancia de laberinto
+        this.lab= new Labyrinth(ROWS, COLS, exitRow, exitCol);
+        // Se configura con bloques y mosntruos el laberinto
+        this.configureLabyrinth();
+
+        // Se distribuyen los jugadores por el laberinto
+        this.lab.spreadPlayers(this.players);
+        
+        // Inicializamos log
+        this.log="- Game just started.\n";
     }
     
     public boolean finished(){
@@ -72,33 +128,43 @@ public class Game {
     
     public GameState getGameState(){
         
-        String player_str="";
+        // Creemos las cadenas de caracteres del estado de los
+        // jugadores y de los monstruos
+        String infoPlayers="";
+        String infoMonsters="";
         
-        for (int i=0; i<players.size();++i){
-            player_str+=players.get(i).toString();
+        // Formato jugadores
+        for (int i=0; i<this.players.size(); i++){
+            infoPlayers+="- " + this.players.get(i).toString()+"\n";
         }
         
-        String monster_str="";
-        
-        for (int i=0; i<monsters.size();++i){
-            monster_str=monsters.get(i).toString();
+        // Formato monstruos
+        for (int i=0; i<this.monsters.size(); i++){
+            infoMonsters+="- " + this.monsters.get(i).toString()+"\n";
         }
         
-        return new GameState(
-               lab.toString(),
-               player_str,
-               monster_str,
-               currentPlayerIndex,
-               lab.haveAWinner(),
-               ""
-                );    
-    }
+        // Estado general del juego
+        GameState estadoGeneral = new GameState (this.lab.toString(), infoPlayers,
+                                infoMonsters, this.currentPlayerIndex, this.finished(), this.log);
+        
+        return estadoGeneral;
+    }  
+    
     
     private void configureLabyrinth(){
-        lab=new Labyrinth(5,5,Dice.randomPos(5),Dice.randomPos(5)); 
+        // Inicializamos el vector de monstruos y los añadimos al laberinto
+        for (int i=0; i<NUM_MONSTERS; i++){
+            Monster monstruo=new Monster ("Monster "+i, Dice.randomIntelligence(), Dice.randomStrength());
+            this.monsters.add(monstruo);
+            // Destacar que la primera variable indica fila y la segunda columna
+            this.lab.addMonster(INIT_MONSTERS[i][0], INIT_MONSTERS[i][1], monstruo);
+        }
         
-        //Configuración del laberinto como yo quiera
-        lab.spreadPlayers(players);
+        // Añadimos los bloques al laberinto
+        for (int i=0; i<NUM_BLOCKS; i++){
+            this.lab.addBlock((Orientation)INIT_BLOCKS[i][0], (int)INIT_BLOCKS[i][1], 
+                    (int)INIT_BLOCKS[i][2], (int)INIT_BLOCKS[i][3]);
+        }
     }
     
     private void nextPlayer(){
@@ -125,28 +191,33 @@ public class Game {
     
     private GameCharacter combat(Monster monster){
         
-        int rounds=0;
+         int rounds=0;   // Inicializamos el número de rounds a 0
+
+        // Suponemos que el jugador ganará, y empieza este atacando.
         GameCharacter winner=GameCharacter.PLAYER;
-        
-        float playerAttack=currentPlayer.attack();
-        boolean lose=monster.defend(playerAttack);
-        while(!lose && rounds<MAX_ROUNDS){
-            winner=GameCharacter.MONSTER;
-            ++rounds;
-            float monsterAttack=monster.attack();
-            lose=currentPlayer.defend(monsterAttack);
+        boolean lose = monster.defend(currentPlayer.attack());
+
+
+        // Bucle que simula el combate entre el jugador y el monstruo, de forma alternada.
+
+        while (!lose && rounds<MAX_ROUNDS){ // Si el monstruo no ha muerto y no se han superado los rounds
+
+            rounds++;   // Incrementamos el número de rounds
             
-            if(!lose){
-                playerAttack=currentPlayer.attack();
+            // Suponemos que el monstruo ganará, y continúa este atacando.
+            winner = GameCharacter.MONSTER;
+            lose = currentPlayer.defend(monster.attack());
+
+            if (!lose){ // Si el jugador no ha muerto
+
+                // Suponemos que el jugador ganará, y continúa este atacando.
+                winner = GameCharacter.PLAYER;
+                lose = monster.defend(currentPlayer.attack());
             }
-            else{
-                winner=GameCharacter.PLAYER;
-                lose=monster.defend(playerAttack);
-            }
-        }
-        logRounds(rounds,MAX_ROUNDS);
-        
-        return winner;
+        } // while (!lose && rounds<MAX_ROUNDS)
+
+        this.logRounds(rounds, MAX_ROUNDS);
+        return winner;        
         
     }
     
@@ -172,35 +243,64 @@ public class Game {
         }
     }
     
+    /**
+     * Se actualiza el log con la información de que el jugador actual
+     * ha ganado el combate
+     */
     private void logPlayerWon(){
-        log+="El jugador ha ganado el combate '\n'";
+        this.log+= "- Player "+this.currentPlayerIndex+" won the fight.\n";
     }
     
+    /**
+     * Se actualiza el log con la información de que el mosntruo
+     * ha ganado el combate al jugador actual
+     */
     private void logMonsterWon(){
-        log+="El monstruo ha ganado el combate '\n'";
+        this.log+= "- Monster won the fight.\n";
     }
     
+    /**
+     * Se actualiza el log con la información de que el jugador actual
+     * ha ganado resucitado
+     */
     private void logResurrected(){
-        log+="El jugador ha resucitado '\n'";
+        this.log+= "- Player "+this.currentPlayerIndex+" resurrected.\n";
     }
     
+    /**
+     * Se actualiza el log con la información de que el jugador actual
+     * ha perdido su turno por estar muerto
+     */
     private void logPlayerSkipTurn(){
-        log+="El jugador ha perdido el turno por estar muerto '\n'";
+        this.log+= "- Player "+this.currentPlayerIndex+" skipped turn (is dead).\n";
     }
     
+    /**
+     * Se actualiza el log con la información de que el jugador actual
+     * ha intentado ejecutar alguna acción no permitida y no se ha producido ningún
+     * cambio
+     */
     private void logPlayerNoOrders(){
-        log+="El jugador no ha seguido las instrucciones del jugador humano "
-                + "(no fue posible) '\n'";
+        this.log+= "- Player "+this.currentPlayerIndex+" didn't follow orders, it was not possible.\n";
     }
     
+    /**
+     * Se actualiza el log con la información de que el jugador actual
+     * se ha desplazado a una casilla vacía o no ha sido posible el desplazamiento
+     */
     private void logNoMonster(){
-        log+="El jugador se ha movido a una celda vacía o no le ha sido posible"
-                + "moverse '\n'";
+        this.log+= "- Player "+this.currentPlayerIndex+" moved to an empty square or it was not possible to move.\n";
     }
     
+    /**
+     * Se actualiza el log con la información de que se han producido rounds
+     * de max rounds en el combate actual
+     * 
+     * @param rounds Número de rounds que se han producido
+     * @param max Número máximo de rounds que puede durar un combate
+     */
     private void logRounds(int rounds, int max){
-        log+="Se han producido " + String.valueOf(rounds) + " de " + 
-              String.valueOf(max) + " rondas de combate '\n'";
+        this.log+= "- Rounds: "+rounds+"/"+max+".\n";
     }
     
 }

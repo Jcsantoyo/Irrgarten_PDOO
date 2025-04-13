@@ -24,7 +24,7 @@ public class Shield {
      
     @Override
     public String toString(){
-        return "W[" + String.valueOf(protection)+", "+String.valueOf(uses)+"]";
+        return "S[" + String.valueOf(protection)+", "+String.valueOf(uses)+"]";
     }
     
     public boolean discard(){

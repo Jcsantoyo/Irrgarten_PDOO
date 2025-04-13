@@ -21,11 +21,12 @@ public class Monster {
         this.intelligence=intelligence;
         this.strength=strength;
         health=INITIAL_HEALTH;
-        setPos(NO_POS,NO_POS);
+        row=NO_POS;
+        col=NO_POS;
     }
     
     public boolean dead(){
-        return (health==0);
+        return (health<=0);
     }
     
     
@@ -58,14 +59,11 @@ public class Monster {
     
     @Override
     public String toString(){
-        String nombre= "Nombre: "+name;
-        String inteligencia= "Inteligencia: "+ String.valueOf(intelligence);
-        String fuerza= "Fuerza: " + String.valueOf(strength);
-        String vida= "Vida: " + String.valueOf(health);
-        String posicion = "Casilla: ("+String.valueOf(row)+", "
-                        +String.valueOf(col)+")";
+       final String FORMAT = "%.6f";
+        String toReturn=this.name+"["+"i:"+ String.format(FORMAT, this.intelligence) + ", s:"+String.format(FORMAT, this.strength);
+        toReturn+=", h:"+String.format(FORMAT, this.health)+", p:("+this.row+", "+this.col+")]";
         
-        return (nombre+'\n'+inteligencia+'\n'+fuerza+'\n'+vida+'\n'+posicion);
+        return toReturn;
     }
     private void gotWounded(){
         --health;

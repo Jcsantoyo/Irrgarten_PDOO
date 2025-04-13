@@ -64,9 +64,35 @@ public class Labyrinth {
     }
     
     @Override
-    //Por implementar
     public String toString(){
-        return "";
+        // Cálculo del número de caracteres que debe ocupar cada parte
+        int filSize = Integer.toString(this.nRows-1).length();
+        int colSize = Integer.toString(this.nCols-1).length();
+        int nPlayersSize = Integer.toString(this.players.length-1).length();
+        
+        // Cálculo del tamaño máximo
+        int maxSize = Math.max(Math.max(filSize, colSize), nPlayersSize);
+        final String FORMAT = "%"+maxSize+"s";
+
+        // Cadena a devolver
+        String toReturn="";
+
+        // Índices en cada columna
+        toReturn+=" " + String.format(FORMAT, " ");
+        for (int i=0; i<this.nCols; i++){
+            toReturn+=String.format(FORMAT, i)+" ";
+        }
+        toReturn+="\n";
+
+
+        for(int r=0; r<this.nRows; r++){
+            toReturn+=String.format(FORMAT, r)+" "; // Índices en cada fila
+            for(int c=0; c<this.nCols; c++){
+                toReturn+=String.format(FORMAT, this.squareStates[r][c])+" ";
+            }
+            toReturn+="\n";
+        }
+        return toReturn;
     }
     
     public void addMonster(int row, int col, Monster monster){
@@ -91,20 +117,18 @@ public class Labyrinth {
     
     public void addBlock(Orientation orientation, int startRow, int startCol, 
                          int length){
-        int incRow;
-        int incCol;
+        int incRow=0;
+        int incCol=0;
         if(orientation==Orientation.VERTICAL){
             incRow=1;
-            incCol=0;
         }
         else{
-            incRow=0;
             incCol=1;
         }
         int row=startRow;
         int col=startCol;
         
-        while((posOK(row,col)) && (length>0)){
+        while((posOK(row,col)) && (length>0) && emptyPos(row,col)){
             squareStates[row][col]=BLOCK_CHAR;
             length--;
             row+=incRow;
@@ -149,8 +173,11 @@ public class Labyrinth {
     }
     
     private boolean canStepOn(int row,int col){
-        return (posOK(row,col) && emptyPos(row,col) && monsterPos(row,col) && 
-                exitPos(row,col));
+        boolean comprobacion=this.posOK(row, col);
+        comprobacion = comprobacion && (this.monsterPos(row, col) || this.exitPos(row, col) ||
+                this.emptyPos(row, col));
+
+        return comprobacion;
     }
     
     private void updateOldPos(int row, int col){
@@ -185,15 +212,17 @@ public class Labyrinth {
     }
     
     private int[] randomEmptyPos(){
-        int pos[] = new int[DIM];
-        pos[ROW]=Dice.randomPos(nRows);
-        pos[COL]=Dice.randomPos(nCols);
+        int row, col;
+        do{
+            row=Dice.randomPos(this.nRows);
+            col=Dice.randomPos(this.nCols);
+        }while (!this.emptyPos(row, col));
         
-        while(!emptyPos(pos[ROW],pos[COL])){
-            pos[ROW]=Dice.randomPos(nRows);
-            pos[COL]=Dice.randomPos(nCols);
-        }
-        return pos;
+        int[] output= new int[2]; // = {row, col};
+        output[ROW]=row;
+        output[COL]=col;
+        
+        return output;
     }
     
     private Monster putPlayer2D(int oldRow, int oldCol, int row, int col, 
@@ -219,8 +248,8 @@ public class Labyrinth {
                 output=monsters[row][col];
             }
             else{
-                char number=player.getNumber();
-                squareStates[row][col]=number;
+                
+                squareStates[row][col]=player.getNumber();
             }
             players[row][col]=player;
             player.setPos(row, col);
