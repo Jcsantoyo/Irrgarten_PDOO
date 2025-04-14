@@ -18,47 +18,12 @@ public class Game {
     private ArrayList<Player> players;
     private Player currentPlayer;
     
-    // ---------------------- PERSONALIZACIÓN LABERINTO ---------------- //
-    // Tamaño del laberinto
-    /**
-     * Número de filas del laberinto.
-     */
+    //Dimensiones del laberinto
     private static final int ROWS=7;
-    /**
-     * Número de columnas del laberinto.
-     */
     private static final int COLS=7;
     
-
-    // Monstruos a incluir
-    /**
-     * Número de monstruos a incluir en el laberinto.
-     */
-    private static final int NUM_MONSTERS=5;
-    /**
-     * Posiciones iniciales de los monstruos en el laberinto.
-     */
-    private static final int [][] INIT_MONSTERS= {{0,0}, {1,1}, {2,2}, {3,3}, {0,3}};
     
-    // Bloques a incluir
-    /**
-     * Número de bloques a incluir en el laberinto.
-     */
-    private static final int NUM_BLOCKS=4;
-    // Object es la clase raíz de la jerarquía de Java, por lo que todas las clases
-    // existentes se pueden definir como Object, haciendo después el
-    // correspondiente casting para usar el tipo de dato que queramos
-    // y sea el correcto con el que hay
-    /**
-     * Bloques iniciales a incluir en el laberinto donde el último parámetro indica la longitud.
-     */
-    private static final Object [][] INIT_BLOCKS=
-    { {Orientation.HORIZONTAL,0,0,3}, {Orientation.HORIZONTAL,3,3,5}, 
-      {Orientation.VERTICAL,  5,6,2}, {Orientation.VERTICAL,  6,5,3} };
-
-// ---------------------- PERSONALIZACIÓN LABERINTO ---------------- //
-    
-    public Game (int nplayers){
+    public Game (int nPlayers){
         
         // Definimos casilla de salida
         int exitRow=Dice.randomPos(ROWS);
@@ -68,14 +33,12 @@ public class Game {
         this.players=new ArrayList<>();
         this.monsters=new ArrayList<>();
         
-        // Creamos los nplayers y los introducimos en el vector de players
-        for(int i=0; i<nplayers; i++)
-            this.players.add(new Player(Character.forDigit(i, 10),
-                                    Dice.randomIntelligence(), Dice.randomStrength()));
-        
+        for(int n = 0; n < nPlayers; n++){
+            players.add(new Player(Character.forDigit(n, 10), Dice.randomIntelligence(), Dice.randomStrength()));
+        }
                 
         // Definimos el jugador que empezará, es decir, el currentPlayer
-        this.currentPlayerIndex=Dice.whoStarts(nplayers);
+        this.currentPlayerIndex=Dice.whoStarts(nPlayers);
         this.currentPlayer=this.players.get(this.currentPlayerIndex);
         
         // Inicializamos la instancia de laberinto
@@ -127,23 +90,19 @@ public class Game {
     }
     
     public GameState getGameState(){
-        
-        // Creemos las cadenas de caracteres del estado de los
-        // jugadores y de los monstruos
+       
         String infoPlayers="";
         String infoMonsters="";
-        
-        // Formato jugadores
+
         for (int i=0; i<this.players.size(); i++){
             infoPlayers+="- " + this.players.get(i).toString()+"\n";
         }
         
-        // Formato monstruos
+        
         for (int i=0; i<this.monsters.size(); i++){
             infoMonsters+="- " + this.monsters.get(i).toString()+"\n";
         }
         
-        // Estado general del juego
         GameState estadoGeneral = new GameState (this.lab.toString(), infoPlayers,
                                 infoMonsters, this.currentPlayerIndex, this.finished(), this.log);
         
@@ -152,19 +111,21 @@ public class Game {
     
     
     private void configureLabyrinth(){
-        // Inicializamos el vector de monstruos y los añadimos al laberinto
-        for (int i=0; i<NUM_MONSTERS; i++){
-            Monster monstruo=new Monster ("Monster "+i, Dice.randomIntelligence(), Dice.randomStrength());
-            this.monsters.add(monstruo);
-            // Destacar que la primera variable indica fila y la segunda columna
-            this.lab.addMonster(INIT_MONSTERS[i][0], INIT_MONSTERS[i][1], monstruo);
-        }
         
-        // Añadimos los bloques al laberinto
-        for (int i=0; i<NUM_BLOCKS; i++){
-            this.lab.addBlock((Orientation)INIT_BLOCKS[i][0], (int)INIT_BLOCKS[i][1], 
-                    (int)INIT_BLOCKS[i][2], (int)INIT_BLOCKS[i][3]);
-        }
+        Monster monster_1=new Monster("Mike Wasowsky", 10,10);
+        Monster monster_2=new Monster("Alucard", Dice.randomIntelligence(),Dice.randomStrength());
+        Monster monster_3=new Monster("Frankenstein", Dice.randomIntelligence(),Dice.randomStrength());
+        lab.addMonster(3, 3, monster_1);
+        lab.addMonster(1, 5, monster_2);
+        lab.addMonster(5, 5, monster_3);
+        monsters.add(monster_1);
+        monsters.add(monster_2);
+        monsters.add(monster_3);
+        lab.addBlock(Orientation.HORIZONTAL, 6, 3, 1);
+        lab.addBlock(Orientation.HORIZONTAL, 2, 1, 2);
+        lab.addBlock(Orientation.VERTICAL, 4, 5, 2);
+
+        
     }
     
     private void nextPlayer(){
@@ -192,12 +153,12 @@ public class Game {
     private GameCharacter combat(Monster monster){
         
          int rounds=0;   // Inicializamos el número de rounds a 0
-
+        
         // Suponemos que el jugador ganará, y empieza este atacando.
         GameCharacter winner=GameCharacter.PLAYER;
         boolean lose = monster.defend(currentPlayer.attack());
-
-
+        
+        
         // Bucle que simula el combate entre el jugador y el monstruo, de forma alternada.
 
         while (!lose && rounds<MAX_ROUNDS){ // Si el monstruo no ha muerto y no se han superado los rounds
@@ -207,7 +168,7 @@ public class Game {
             // Suponemos que el monstruo ganará, y continúa este atacando.
             winner = GameCharacter.MONSTER;
             lose = currentPlayer.defend(monster.attack());
-
+            
             if (!lose){ // Si el jugador no ha muerto
 
                 // Suponemos que el jugador ganará, y continúa este atacando.
@@ -215,9 +176,9 @@ public class Game {
                 lose = monster.defend(currentPlayer.attack());
             }
         } // while (!lose && rounds<MAX_ROUNDS)
-
+        
         this.logRounds(rounds, MAX_ROUNDS);
-        return winner;        
+        return winner;
         
     }
     

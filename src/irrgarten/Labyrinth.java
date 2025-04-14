@@ -117,22 +117,24 @@ public class Labyrinth {
     
     public void addBlock(Orientation orientation, int startRow, int startCol, 
                          int length){
-        int incRow=0;
-        int incCol=0;
-        if(orientation==Orientation.VERTICAL){
-            incRow=1;
+        int incRow;
+        int incCol;
+        if(orientation == Orientation.VERTICAL){
+            incRow = 1;
+            incCol = 0;
         }
-        else{
-            incCol=1;
-        }
-        int row=startRow;
-        int col=startCol;
         
-        while((posOK(row,col)) && (length>0) && emptyPos(row,col)){
-            squareStates[row][col]=BLOCK_CHAR;
+        else{
+            incRow = 0;
+            incCol = 1;
+        }
+        int row = startRow;
+        int col = startCol;
+        while(this.posOK(row, col)&& this.emptyPos(row, col)&& length > 0){
+            squareStates[row][col] = BLOCK_CHAR;
             length--;
-            row+=incRow;
-            col+=incCol;
+            row += incRow;
+            col += incCol;
         }
             
     }
@@ -155,7 +157,7 @@ public class Labyrinth {
     }
     
     private boolean posOK(int row, int col){
-        return (row>=ROW && row<nRows && col>=COL && col<nCols);
+        return (row>=0 && row<nRows && col>=0 && col<nCols);
     }
     
     private boolean emptyPos(int row, int col){
@@ -173,11 +175,14 @@ public class Labyrinth {
     }
     
     private boolean canStepOn(int row,int col){
-        boolean comprobacion=this.posOK(row, col);
-        comprobacion = comprobacion && (this.monsterPos(row, col) || this.exitPos(row, col) ||
-                this.emptyPos(row, col));
-
-        return comprobacion;
+        boolean step = false;
+        if(posOK(row, col)){
+            if(emptyPos(row,col)||monsterPos(row,col)||exitPos(row,col)){
+                step = true;
+            }
+        }
+        
+        return step;
     }
     
     private void updateOldPos(int row, int col){
@@ -218,7 +223,7 @@ public class Labyrinth {
             col=Dice.randomPos(this.nCols);
         }while (!this.emptyPos(row, col));
         
-        int[] output= new int[2]; // = {row, col};
+        int[] output= new int[2]; 
         output[ROW]=row;
         output[COL]=col;
         

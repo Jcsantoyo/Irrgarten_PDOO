@@ -9,8 +9,8 @@ import java.util.ArrayList;
 public class Player {
     static final int MAX_WEAPONS=2;
     static final int MAX_SHIELDS=3;
-    static final int INITIAL_HEALTH=10;
-    static final int HITS2LOSE=3;
+    static final int INITIAL_HEALTH=2;
+    static final int HITS2LOSE=8;
     static final int NO_POS=-1;
             
     private String name;
@@ -27,7 +27,7 @@ public class Player {
     
     
     public Player(char number, float intelligence, float strength){
-        name="Player #"+number;
+        name="Player #"+ number;
         this.number=number;
         this.intelligence=intelligence;
         
