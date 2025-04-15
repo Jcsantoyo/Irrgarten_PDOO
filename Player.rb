@@ -26,7 +26,7 @@ module Irrgarten
     # @param [Numeric] intelligence Valor de la inteligencia del jugador, que influye en la defensa.
     # @param [Numeric] strength Valor de la fuerza del jugador, que influye en el ataque.
     def initialize(number,intelligence,strength)
-      @name= "Persona #{number}"
+      @name= "Player #{number}"
       @number=number.to_s
       @intelligence=intelligence
       @strength=strength
@@ -211,7 +211,7 @@ module Irrgarten
 
 
 
-    private
+    #private
 
 
     # Recibe y almacena una nueva arma en el inventario del jugador.
@@ -366,24 +366,19 @@ module Irrgarten
 
 
   
+  # ------------------------------------------------------------------------
+  # Bloque de pruebas: Se incluyen las pruebas existentes y se añaden tests para los
+  # métodos que originalmente eran privados. Comenta temporalmente la línea "private"
+  # en la clase para poder ejecutarlas.
   if __FILE__ == $0
-    
-    # 1. Crear una instancia del jugador
-    puts "== Creando jugador =="
+
+    puts "== Creando jugador para pruebas =="
     player = Player.new(1, 10, 8)
     puts "Estado inicial del jugador:"
     puts player.to_s
     puts
-    
-    # 2. Establecer posición
-    puts "== Estableciendo posición =="
-    player.set_pos(2, 3)
-    puts "Posición establecida a (2,3)"
-    puts player.to_s
-    puts
 
-    # 3. Mover al jugador
-    puts "== Probando movimiento =="
+    puts "== Prueba del movimiento =="
     valid_moves = [:north, :east, :south]
     puts "Movimientos válidos: #{valid_moves}"
     puts "Intentando mover al jugador a :west (no válido)."
@@ -391,16 +386,13 @@ module Irrgarten
     puts "Resultado del movimiento: #{chosen_direction}"
     puts
 
-    # 4. Atacar y defender
-    puts "== Probando ataque y defensa =="
+    puts "== Prueba de ataque y defensa =="
     puts "Valor de ataque del jugador (fuerza + armas): #{player.attack}"
-    
-    # Vamos a simular que el jugador recibe un ataque de valor 15
     received_attack = 15
     puts "Jugador defiende un ataque de #{received_attack}."
     player_loses = player.defend(received_attack)
     if player_loses
-      puts "El jugador ha sido derrotado o ha llegado al límite de golpes consecutivos."
+      puts "El jugador ha sido derrotado o ha alcanzado el límite de golpes consecutivos."
     else
       puts "El jugador sobrevivió al ataque."
     end
@@ -408,23 +400,57 @@ module Irrgarten
     puts player.to_s
     puts
 
-    # 5. Recibir recompensas
-    puts "== Probando recepción de recompensas =="
-    puts "Invocando player.receive_reward ..."
+    puts "== Prueba de recepción de recompensas =="
+    puts "Invocando receive_reward ..."
     player.receive_reward
     puts "Estado del jugador después de recibir recompensas:"
     puts player.to_s
     puts
 
-    # 6. Resucitar al jugador
-    puts "== Probando resurrección =="
+    puts "== Prueba de resurrección =="
     player.resurrect
     puts "Estado del jugador tras resucitar:"
     puts player.to_s
     puts
 
-    puts "== Pruebas completadas. =="
-  
+    # ------------------------------------------------------------------------
+    puts "== Pruebas de métodos privados adicionales =="
+    # Nota: Estos métodos estaban en la sección privada; asegúrate de comentarla o haberla removido temporalmente.
+    puts "\n>> Probando new_weapon:"
+    weapon = player.new_weapon
+    puts "Resultado de new_weapon: #{weapon}"  # Se asume que Weapon tiene un to_s adecuado.
+
+    puts "\n>> Probando new_shield:"
+    shield = player.new_shield
+    puts "Resultado de new_shield: #{shield}"    # Se asume que Shield tiene un to_s adecuado.
+
+    puts "\n>> Probando sum_weapons y sum_shields:"
+    # Agregamos manualmente los objetos creados para testear las sumas.
+    player.receive_weapon(weapon)
+    player.receive_shield(shield)
+    puts "Suma total de ataque de armas (sum_weapons): #{player.sum_weapons}"
+    puts "Suma total de protección de escudos (sum_shields): #{player.sum_shields}"
+
+    puts "\n>> Probando defensive_energy:"
+    puts "Energía defensiva: #{player.defensive_energy}"
+
+    puts "\n>> Probando got_wounded, inc_consecutive_hits, y reset_hits:"
+    initial_health = player.instance_variable_get(:@health)
+    puts "Salud inicial: #{initial_health}"
+    player.got_wounded
+    puts "Salud tras got_wounded: #{player.instance_variable_get(:@health)}"
+    player.inc_consecutive_hits
+    player.inc_consecutive_hits
+    puts "Golpes consecutivos tras dos inc_consecutive_hits: #{player.instance_variable_get(:@consecutive_hits)}"
+    player.reset_hits
+    puts "Golpes consecutivos tras reset_hits: #{player.instance_variable_get(:@consecutive_hits)}"
+
+    puts "\n>> Probando manage_hit:"
+    # Se simula un ataque, por ejemplo, de 15 puntos.
+    result = player.manage_hit(15)
+    puts "Resultado de manage_hit(15): #{result} (true indica que se perdió el combate)."
+    
+    puts "\n== Pruebas completadas. =="
   end
 end
   

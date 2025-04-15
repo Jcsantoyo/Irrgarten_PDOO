@@ -49,7 +49,7 @@ module Irrgarten
     #
     # @return [String] La representación textual del escudo.
     def to_s
-      "W[#{@protection}, #{@uses}]"
+      "S[#{@protection}, #{@uses}]"
     end
     
   
