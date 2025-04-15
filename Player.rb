@@ -366,10 +366,7 @@ module Irrgarten
 
 
   
-  # ------------------------------------------------------------------------
-  # Bloque de pruebas: Se incluyen las pruebas existentes y se añaden tests para los
-  # métodos que originalmente eran privados. Comenta temporalmente la línea "private"
-  # en la clase para poder ejecutarlas.
+
   if __FILE__ == $0
 
     puts "== Creando jugador para pruebas =="
