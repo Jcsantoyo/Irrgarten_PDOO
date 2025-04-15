@@ -41,7 +41,7 @@ module Irrgarten
     #
     # @return [Boolean] Retorna true si la salud del monstruo es 0, false en caso contrario.
     def dead
-      return @health==0
+      return @health<=0
     end
 
 
@@ -64,14 +64,14 @@ module Irrgarten
     # @param [Numeric] received_attack El valor del ataque recibido.
     # @return [Boolean] true si el monstruo resulta muerto tras defenderse, false de lo contrario.
     def defend(received_attack)
-      is_dead=dead
+      is_dead=dead()
 
       if(!is_dead)
         defensive_energy=Dice.intensity(@intelligence)
 
         if(defensive_energy<received_attack)
-          got_wounded
-          is_dead=dead
+          got_wounded()
+          is_dead=dead()
 
         end
 

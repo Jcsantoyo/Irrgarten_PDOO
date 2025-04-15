@@ -17,7 +17,7 @@ module Irrgarten
 
     @@NO_POS=-1
 
-    def initialize(nRows, nCols, exitRow, exitCol)
+    def initialize(n_rows, n_cols, exit_row, exit_col)
       @n_rows = n_rows.to_i
       @n_cols = n_cols.to_i
       @exit_row = exit_row.to_i
@@ -38,11 +38,41 @@ module Irrgarten
     end
 
     def have_a_winner
-      return (@players[exit_row][exit_col]!=nil)
+      return (@players[@exit_row][@exit_col]!=nil)
     end
 
     def to_s
+      # Cálculo del número de caracteres que debe ocupar cada parte
+      fil_size = (@n_rows - 1).to_s.size
+      col_size = (@n_cols - 1).to_s.size
+      n_players_size = (@players.size - 1).to_s.size
+    
+      # Cálculo del tamaño máximo
+      max_size = [fil_size, col_size, n_players_size].max
+      format_str = "%#{max_size}s"
+    
+      # Construimos la cadena de salida
+      to_return = ""
+    
+      # Índices en cada columna (encabezado)
+      to_return << " " + sprintf(format_str, " ")
+      @n_cols.times do |i|
+        to_return << sprintf(format_str, i) + " "
+      end
+      to_return << "\n"
+    
+      # Recorremos las filas y columnas
+      @n_rows.times do |r|
+        to_return << sprintf(format_str, r) + " "
+        @n_cols.times do |c|
+          to_return << sprintf(format_str, @square_states[r][c]) + " "
+        end
+        to_return << "\n"
+      end
+    
+      to_return
     end
+    
 
     def add_monster(row, col, monster)
       if (pos_ok(row,col) && empty_pos(row,col))
@@ -65,20 +95,21 @@ module Irrgarten
 
     def add_block(orientation, start_row,start_col,length)
       if(orientation==Orientation::VERTICAL)
-        inc_row=1
-        inc_col=0
+        inc_row = 1
+        inc_col = 0
       else
-        inc_row=0
-        inc_col=1
+          inc_row = 0
+          inc_col = 1
       end
-      row=start_row
-      col=start_col
 
-      if((pos_ok(row,col)) && (empty_pos(row,col))&& (length>0))
-        @square_states[row][col]
-        length-=1
-        row+=inc_row
-        col+=inc_col
+      row = start_row
+      col = start_col
+
+      while ( pos_ok(row,col) && empty_pos(row,col) && (length>0) )
+          @square_states[row][col] = @@BLOCK_CHAR
+          length-=1
+          row+=inc_row
+          col+=inc_col
       end
       
     end
@@ -108,7 +139,7 @@ module Irrgarten
     private
 
     def pos_ok(row, col)
-      return (row>=@@ROW && row<@n_rows && col>=@@COL && col<@n_cols);
+      return (row>=0 && row<@n_rows && col>=0 && col<@n_cols);
     end
 
     def empty_pos(row, col)
@@ -128,7 +159,7 @@ module Irrgarten
     end
 
     def can_step_on(row, col)
-      return (pos_ok(row, col) && empty_pos(row, col) && monster_pos(row,col) && exit_pos(row, col))
+      return (pos_ok(row, col) && (empty_pos(row, col) || monster_pos(row,col) || exit_pos(row, col)))
     end
 
     def update_old_pos(row, col)
@@ -183,11 +214,11 @@ module Irrgarten
             @players[old_row][old_col]=nil
           end
         end
-
+      
         monster_pos=monster_pos(row,col)
 
         if(monster_pos)
-          @square_states=@@COMBAT_CHAR
+          @square_states[row][col]=@@COMBAT_CHAR
           output=@monsters[row][col]
         else
           number = player.number
@@ -196,10 +227,11 @@ module Irrgarten
 
         @players[row][col]=player
         player.set_pos(row,col)
+        return output
+      end
     end
-    return output
   end
-  
 end
+
 
 

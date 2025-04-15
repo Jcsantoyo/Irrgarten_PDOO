@@ -200,7 +200,7 @@ module Irrgarten
       end
 
       s_reward.times do |i|
-        snew=new_weapon()
+        snew=new_shield()
         receive_shield(snew)
       end
 
@@ -281,7 +281,7 @@ module Irrgarten
     def sum_weapons
       sum = 0.0
       @weapons.each do |weapon|
-        sum += weapon.attack
+        sum += weapon.attack()
       end
       return sum
     end
@@ -292,7 +292,7 @@ module Irrgarten
     def sum_shields
       sum = 0.0
       @shields.each do |shield|
-        sum += shield.protect
+        sum += shield.protect()
       end
       return sum
     end
