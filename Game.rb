@@ -4,6 +4,14 @@ require_relative 'GameState'
 
 
 module Irrgarten
+  # Clase que representa el juego Irrgarten.
+  #
+  # Coordina la creación y configuración del laberinto, los jugadores, los monstruos,
+  # el desarrollo de los turnos (movimientos, combate, recompensas o resurrección) y la
+  # generación de un log con los eventos del juego.
+  #
+  #
+  # @author Juan Caballero Santoyo
   class Game
     @@MAX_ROUNDS=10
 
@@ -11,6 +19,14 @@ module Irrgarten
     @@ROWS=7
     @@COLS=7
 
+
+    # Inicializa una nueva instancia del juego.
+    #
+    # Se crea el laberinto con una salida en una posición aleatoria, se instancian los jugadores,
+    # se selecciona el jugador que iniciará el juego y se configuran monstruos y bloques en el laberinto.
+    #
+    # @param [Integer] nplayers Número de jugadores de la partida.
+    # @return [Game] La instancia del juego inicializada.
     def initialize(nplayers)
       exit_row=Dice.random_pos(@@ROWS)
       exit_col=Dice.random_pos(@@COLS)
@@ -31,16 +47,28 @@ module Irrgarten
       configure_labyrinth()
       @lab.spread_players(@players)
 
-
     end
 
+    # Indica si la partida ha finalizado.
+    #
+    # Se considera finalizada cuando algún jugador alcanza la celda de salida.
+    #
+    # @return [Boolean] true si hay un ganador, false en caso contrario.
     def finished
       return @lab.have_a_winner
     end
 
 
+    # Procesa el siguiente turno del juego.
+    #
+    # Realiza el movimiento del jugador actual en función de la dirección preferida,
+    # gestiona el combate (si se encuentra un monstruo), aplica recompensas o la
+    # resurrección en caso de que el jugador esté muerto, y finalmente avanza al siguiente jugador.
+    #
+    # @param [Direction] preferred_direction Dirección preferida para mover al jugador.
+    # @return [Boolean] true si el juego ha finalizado (hay ganador), false en caso contrario.
     def next_step(preferred_direction)
-      log=""
+      @log=""
 
       dead=@current_player.dead
 
@@ -74,7 +102,12 @@ module Irrgarten
     
     end
 
-
+    # Retorna el estado actual del juego.
+    #
+    # Se recopila la representación en cadena del laberinto, la información de cada jugador,
+    # la información de los monstruos, el índice del jugador actual, si el juego ha finalizado y el log de eventos.
+    #
+    # @return [GameState] Objeto que encapsula el estado actual del juego.
     def game_state
       info_players=""
       info_monsters=""
@@ -92,6 +125,12 @@ module Irrgarten
 
     private
 
+    # Configura el laberinto: añade monstruos y bloques en posiciones predefinidas.
+    #
+    # Se crean tres monstruos, se colocan en el laberinto y se guardan en el array @monsters.
+    # También se añaden bloques en determinadas posiciones y orientaciones.
+    #
+    # @return [void]
     def configure_labyrinth
 
       monster_1=Monster.new("Mike Wasowsky",Dice.random_intelligence,Dice.random_strength)
@@ -113,6 +152,11 @@ module Irrgarten
 
     end
 
+    # Avanza al siguiente jugador en la lista.
+    #
+    # Actualiza el índice y el jugador actual de forma circular.
+    #
+    # @return [void]
     def next_player
       if(@current_player_index==@players.size-1)
         @current_player_index=0
@@ -123,6 +167,13 @@ module Irrgarten
       @current_player=@players[@current_player_index]
     end
 
+    # Calcula la dirección efectiva a partir de la preferida.
+    #
+    # Consulta al laberinto por los movimientos válidos en la posición actual del jugador
+    # y utiliza el método move del jugador para determinar la dirección final.
+    #
+    # @param [Direction] preferred_direction Dirección preferida por el jugador.
+    # @return [Symbol] La dirección efectivamente elegida.
     def actual_direction(preferred_direction)
       current_row=@current_player.row
       current_col=@current_player.col
@@ -134,6 +185,14 @@ module Irrgarten
       return output
     end
 
+
+    # Simula un combate entre el jugador actual y un monstruo.
+    #
+    # Alterna ataques entre el jugador y el monstruo hasta que uno pierda o se alcance
+    # el número máximo de rondas. Se retorna quién resultó vencedor.
+    #
+    # @param [Monster] monster Monstruo contra el que se combate.
+    # @return [GameCharacter] Constante que indica el vencedor (p.ej., GameCharacter::PLAYER o GameCharacter::MONSTER).
     def combat(monster)
       rounds=0
       winner=GameCharacter::PLAYER
@@ -161,7 +220,13 @@ module Irrgarten
       return winner
     end
 
-
+    # Gestiona la recompensa tras el combate.
+    #
+    # Si el jugador vence, recibe una recompensa llamando a receive_reward;
+    # en caso contrario, se registra la victoria del monstruo.
+    #
+    # @param [GameCharacter] winner Constante que indica al vencedor del combate.
+    # @return [void]
     def manage_reward(winner)
       if(winner==GameCharacter::PLAYER)
         @current_player.receive_reward
@@ -171,6 +236,12 @@ module Irrgarten
       end
     end
 
+    # Gestiona la resurrección del jugador actual.
+    #
+    # Consulta a Dice si el jugador debe resucitar. Si es así, invoca el método de resurrección;
+    # si no, registra que el jugador omite su turno.
+    #
+    # @return [void]
     def manage_resurrection
       resurrect=Dice.resurrect_player
       if(resurrect)
@@ -182,33 +253,57 @@ module Irrgarten
 
     end
 
+
+    # Registra en el log que el jugador ganó el combate.
+    #
+    # @return [void]
     def log_player_won
         @log += "- Player #{@current_player_index} won the fight.\n"
     end
 
+    # Registra en el log que el monstruo ganó el combate.
+    #
+    # @return [void]
     def log_monster_won
         @log += "- Monster won the fight.\n"
     end
 
+    # Registra en el log que el jugador fue resucitado.
+    #
+    # @return [void]
     def log_resurrected
         @log += "- Player #{@current_player_index} resurrected.\n"
     end
 
+    # Registra en el log que el jugador perdió su turno (estaba muerto).
+    #
+    # @return [void]
     def log_player_skip_turn
         @log += "- Player #{@current_player_index} skipped turn (is dead).\n"
     end
 
+    # Registra en el log que el jugador no siguió las órdenes (la dirección preferida no era válida).
+    #
+    # @return [void]
     def log_player_no_orders
         @log += "- Player #{@current_player_index} didn't follow orders, it was not possible.\n"
     end
 
+    # Registra en el log que el jugador se movió a una celda vacía o que el movimiento no fue posible.
+    #
+    # @return [void]
     def log_no_monster
         @log += "- Player #{@current_player_index} moved to an empty cell or it was not possible to move.\n"
     end
 
-    
+    # Registra en el log la cantidad de rondas transcurridas durante el combate.
+    #
+    # @param [Integer] rounds Número de rondas efectivamente ejecutadas.
+    # @param [Integer] max Número máximo de rondas permitidas.
+    # @return [void]
     def log_rounds(rounds, max)
         @log += "- Rounds: #{rounds}/#{max}.\n"
     end
   end
+  
 end
