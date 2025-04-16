@@ -4,8 +4,11 @@ package irrgarten;
 import java.util.ArrayList;
 
 /**
- *
- * @author juan
+ * Esta clase representará el tablero indicando los elementos que hay
+ * en cada posición de él, es decir, los monstruos, muros y jugadores, así como
+ * la casilla de salida.
+ * 
+ * @author Juan Caballero Santoyo
  */
 public class Labyrinth {
     
@@ -29,6 +32,14 @@ public class Labyrinth {
     private Player[][] players;
     private char[][] squareStates;
     
+    
+    /**
+     * Constructor de la clase
+     * @param nRows Número de filas del laberinto
+     * @param nCols Número de columnas del laberinto
+     * @param exitRow Fila de la casilla de salida
+     * @param exitCol Columna de la casilla de salida
+     */
     public Labyrinth(int nRows, int nCols, int exitRow, int exitCol){
         
         this.nRows=nRows;
@@ -49,6 +60,11 @@ public class Labyrinth {
         
     }
     
+    
+     /**
+     * Distribuye una lista de jugadores por el laberinto.
+     * @param players ArrayList con los jugadores a repartir por el Laberinto
+     */
     public void spreadPlayers(ArrayList<Player> players){
         
         for(int i=0; i<players.size();++i){
@@ -56,13 +72,26 @@ public class Labyrinth {
             int[] pos=randomEmptyPos();
             putPlayer2D(NO_POS,NO_POS,pos[ROW],pos[COL],p);
         }
-
     }
     
+    
+    /**
+     * Indica si algún jugador llego a la casilla de salida, y por tanto
+     * gano el juego
+     * 
+     * @return Devuelve true si alguien gano, false en caso contrario
+     */
     public boolean haveAWinner(){
         return (players[exitRow][exitCol]!=null);
     }
     
+    
+    /**
+      * Muestra el estado de cada casilla del laberinto, como
+      * por ejemplo si hay monstruo, combate, etc
+      * 
+      * @return Cadena de carácteres que indican el estado de cada casilla del laberinto
+      */
     @Override
     public String toString(){
         // Cálculo del número de caracteres que debe ocupar cada parte
@@ -95,6 +124,15 @@ public class Labyrinth {
         return toReturn;
     }
     
+    
+    /**
+     * Añade un monstruo recibido al laberinto, si la posición dada está vacía
+     * y es correcta, es decir, es una posición válida en el laberinto
+     * 
+     * @param row Fila en la que se implementara el monstruo
+     * @param col Columna en la que se implementara el monstruo
+     * @param monster Monstruo que se implementara en el laberinto
+     */
     public void addMonster(int row, int col, Monster monster){
         if(posOK(row,col) && emptyPos(row,col)){
             squareStates[row][col]=MONSTER_CHAR;
@@ -103,6 +141,15 @@ public class Labyrinth {
         }
     }
     
+    
+    /**
+     * Método que mueve un jugador en el laberinto en una dirección.
+     * Informa sobre si se encuentra con un monstruo.
+     * 
+     * @param direction Dirección en la que ha de moverse el jugador. Si no es válida, no se mueve.
+     * @param player Jugador a desplazar
+     * @return El monstruo con el que se ha encontrado. Devuelve *null* si no hay monstro
+     */
     public Monster putPlayer(Directions direction, Player player){
         
         int oldRow=player.getRow();
@@ -112,9 +159,17 @@ public class Labyrinth {
         Monster monster=putPlayer2D(oldRow,oldCol,newPos[ROW],newPos[COL],player);
         
         return monster;
-
     }
     
+    
+    /**
+     * Método que añade un bloque al laberinto.
+     *
+     * @param orientation Orientación del bloque, vertical u horizontal
+     * @param startRow Fila de inicio del bloque
+     * @param startCol Columna de inicio del bloque
+     * @param length Longitud del bloque
+     */
     public void addBlock(Orientation orientation, int startRow, int startCol, 
                          int length){
         int incRow;
@@ -139,6 +194,13 @@ public class Labyrinth {
             
     }
     
+    /**
+     * Calcula las direcciones hacia las que se puede mover un jugador desde una
+     * posición dada.
+     * @param row Fila desde la que se quiere ver hacia donde se puede mover
+     * @param col Columna desde la que se quiere ver hacia donde se puede mover
+     * @return Direcciones en las que se puede mover desde (row, col)
+     */
     public ArrayList<Directions> validMoves(int row, int col){
         
         ArrayList<Directions> output=new ArrayList<>();
@@ -156,24 +218,64 @@ public class Labyrinth {
 
     }
     
+    /**
+     * Comprueba si una posición es válida dentro del laberinto
+     * @param row Fila a comprobar
+     * @param col Columna a comprobar
+     * @return True si es correcta la posición, false en caso contrario
+     */
     private boolean posOK(int row, int col){
         return (row>=0 && row<nRows && col>=0 && col<nCols);
     }
     
+    /**
+     * Comprueba si una casilla está vacía dentro del laberinto
+     * @param row Fila a comprobar
+     * @param col Columna a comprobar
+     * @return True si está vacía la casilla, false en caso contrario
+     */
     private boolean emptyPos(int row, int col){
         return (squareStates[row][col] == EMPTY_CHAR);
     }
+    
+    /**
+     * Comprueba si una casilla tiene un monstruo
+     * @param row Fila a comprobar
+     * @param col Columna a comprobar
+     * @return True si hay un monstruo en la casilla, false en caso contrario
+     */
     private boolean monsterPos(int row, int col){
         return (squareStates[row][col] == MONSTER_CHAR);
     }
     
+    /**
+     * Comprueba si una casilla es la de salida
+     * @param row Fila a comprobar
+     * @param col Columna a comprobar
+     * @return True si la casilla es la de salida, false en caso contrario
+     */
     private boolean exitPos(int row, int col){
         return (squareStates[row][col] == EXIT_CHAR);
     }
+    
+    
+    /**
+     * Comprueba si una casilla está en estado de combate
+     * @param row Fila a comprobar
+     * @param col Columna a comprobar
+     * @return True si hay un combate en la casilla, false en caso contrario
+     */
     private boolean combatPos(int row, int col){
         return (squareStates[row][col] == COMBAT_CHAR);
     }
     
+    /**
+     * Comprueba si una casilla es válida en el laberinto y hay un monstruo, está vacía
+     * o es casilla de salida
+     * @param row Fila a comprobar
+     * @param col Columna a comprobar
+     * @return True si cumple las características pedida, false en caso contrario
+     */
     private boolean canStepOn(int row,int col){
         boolean step = false;
         if(posOK(row, col)){
@@ -185,6 +287,13 @@ public class Labyrinth {
         return step;
     }
     
+    /**
+     * Comprueba si una posición es válida, en caso afirmativo se establece la casilla
+     * con un monstruo si estaba en estado de combate o en caso contrario se define
+     * la casilla como vacía
+     * @param row Fila a comprobar
+     * @param col Columna a comprobar
+     */
     private void updateOldPos(int row, int col){
         if(posOK(row,col)){
             if(combatPos(row,col))
@@ -194,6 +303,14 @@ public class Labyrinth {
         }
     }
     
+    /**
+     * Calcula la nueva posición tras hacer el movimiento en una unidad hacia la
+     * dirección dada
+     * @param row Fila inicial
+     * @param col Columna inicial
+     * @param direction Dirección en la que nos desplazamos
+     * @return Nueva posición tras el desplazamiento en una unidad
+     */
     private int[] dir2Pos(int row, int col, Directions direction){
         int pos[] = new int[DIM];
         switch(direction){
@@ -216,6 +333,10 @@ public class Labyrinth {
         return pos;
     }
     
+    /**
+     * Define una posición random en el laberinto, la cual debe estar vacía
+     * @return Posición random dentro del laberinto
+     */
     private int[] randomEmptyPos(){
         int row, col;
         do{
@@ -230,6 +351,23 @@ public class Labyrinth {
         return output;
     }
     
+    /**
+     * Método que actualiza la posición del jugador dado a la nueva posición, actualizando
+     * el estado de la casilla antigua y nueva.
+     *
+     * Se comprueba si la nueva posición es válida y, además,
+     * si el número del jugador pasado no coincide con el que hay en `players`,
+     * no se cambia el estado de la casilla antigua del jugador.
+     * 
+     * Devuelve el monstruo de la nueva casilla si hay un combate en la posición actualizada.
+     *
+     * @param oldRow  Posición antigua del jugador (fila)
+     * @param oldCol  Posición antigua del jugador (columna)
+     * @param row  Nueva posición del jugador (fila)
+     * @param col  Nueva posición del jugador (columna)
+     * @param player Jugador a mover
+     * @return  Monstruo que hay en la casilla a la que se llega.
+     */
     private Monster putPlayer2D(int oldRow, int oldCol, int row, int col, 
                                 Player player){
         Monster output=null;

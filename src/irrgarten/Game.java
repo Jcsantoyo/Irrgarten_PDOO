@@ -2,9 +2,13 @@
 package irrgarten;
 import java.util.ArrayList;
 
+
 /**
- *
- * @author juan
+ * Clase que representa el juego Irrgarten. Esta clase se encarga de gestionar el estado del juego,
+ * las acciones de los jugadores y los monstruos, y de generar un estado del juego que pueda ser
+ * consultado por la interfaz de usuario.
+ * 
+ * @author Juan Caballero Santoyo
  */
 public class Game {
     private static final int MAX_ROUNDS=10;
@@ -23,13 +27,19 @@ public class Game {
     private static final int COLS=7;
     
     
+     /**
+     * Constructor de la clase Game, que inicializará los jugadores a jugar 
+     * (definiendo el jugador que inicia la partida) y el estado del laberinto, 
+     * que incluye su propia construcción, es decir, definir los bloques,
+     * los monstruos y sus posiciones.
+     * 
+     * @param nPlayers Numero de jugadores
+     */
     public Game (int nPlayers){
         
-        // Definimos casilla de salida
         int exitRow=Dice.randomPos(ROWS);
         int exitCol=Dice.randomPos(COLS);
 
-        // Inicializamos los vectores de jugadores y monstruos
         this.players=new ArrayList<>();
         this.monsters=new ArrayList<>();
         
@@ -37,26 +47,32 @@ public class Game {
             players.add(new Player(Character.forDigit(n, 10), Dice.randomIntelligence(), Dice.randomStrength()));
         }
                 
-        // Definimos el jugador que empezará, es decir, el currentPlayer
         this.currentPlayerIndex=Dice.whoStarts(nPlayers);
         this.currentPlayer=this.players.get(this.currentPlayerIndex);
         
-        // Inicializamos la instancia de laberinto
         this.lab= new Labyrinth(ROWS, COLS, exitRow, exitCol);
-        // Se configura con bloques y mosntruos el laberinto
         this.configureLabyrinth();
 
-        // Se distribuyen los jugadores por el laberinto
         this.lab.spreadPlayers(this.players);
         
-        // Inicializamos log
         this.log="- Game just started.\n";
     }
     
+    /**
+     * Indica si algún jugador ha ganado la partida, es decir, si ha finalizado
+     * el juego
+     * @return True si se finalizo el juego, false en caso contrario
+     */
     public boolean finished(){
         return lab.haveAWinner();
     }
     
+    
+    /**
+     * Método que estudia un turno completo del juego. Gestiona el paso de un turno a otro.
+     * @param preferredDirection  Dirección a la que se pretende mover el jugador
+     * @return True si se finalizo el juego, false en caso contrario
+     */
     public boolean nextStep(Directions preferredDirection){
         log="";
         boolean dead=currentPlayer.dead();
@@ -89,6 +105,12 @@ public class Game {
         return endGame;
     }
     
+    /**
+     * Crea una intancia de la clase GameState a partir de los miembros de 
+     * la clase Game
+     * 
+     * @return Una intancia de GameState con los datos del estado actual del juego
+     */
     public GameState getGameState(){
        
         String infoPlayers="";
@@ -109,10 +131,12 @@ public class Game {
         return estadoGeneral;
     }  
     
-    
+    /**
+     * Se crea el laberinto a partir de los monstruos y bloques definidos
+     */
     private void configureLabyrinth(){
         
-        Monster monster_1=new Monster("Mike Wasowsky", 10,10);
+        Monster monster_1=new Monster("Mike Wasowsky", Dice.randomIntelligence(),Dice.randomStrength());
         Monster monster_2=new Monster("Alucard", Dice.randomIntelligence(),Dice.randomStrength());
         Monster monster_3=new Monster("Frankenstein", Dice.randomIntelligence(),Dice.randomStrength());
         lab.addMonster(3, 3, monster_1);
@@ -128,6 +152,11 @@ public class Game {
         
     }
     
+    
+    
+    /**
+     * Se indica que el turno pasa al siguiente jugador
+     */
     private void nextPlayer(){
         if(currentPlayerIndex==players.size()-1)
             currentPlayerIndex=0;
@@ -137,6 +166,14 @@ public class Game {
         currentPlayer=players.get(currentPlayerIndex);
     }
     
+    
+    /**
+     * Método que mueve de hecho al jugador. Se intenta que se mueva a la casilla
+     * indicada por la dirección, y si no es posible, se moverá en otra dirección.
+     * 
+     * @param preferredDirection  Dirección a la que se pretende mover el jugador
+     * @return   Dirección a la que se moverá el jugador (si es válida)
+     */
     private Directions actualDirection(Directions preferredDirection){
         
         int currentRow=currentPlayer.getRow();
@@ -150,38 +187,42 @@ public class Game {
 
     }
     
+    /**
+     * Método encargado de llevar a cabo un combate entre el jugador actual y un monstruo.
+     * 
+     * @param monster Monstruo con el que se va a combatir.
+     * @return GameCharacter: Jugador o Monstruo, tipo de rol del ganador del combate.
+     */
     private GameCharacter combat(Monster monster){
         
-         int rounds=0;   // Inicializamos el número de rounds a 0
+         int rounds=0;   
         
-        // Suponemos que el jugador ganará, y empieza este atacando.
         GameCharacter winner=GameCharacter.PLAYER;
         boolean lose = monster.defend(currentPlayer.attack());
         
-        
-        // Bucle que simula el combate entre el jugador y el monstruo, de forma alternada.
-
-        while (!lose && rounds<MAX_ROUNDS){ // Si el monstruo no ha muerto y no se han superado los rounds
-
-            rounds++;   // Incrementamos el número de rounds
-            
-            // Suponemos que el monstruo ganará, y continúa este atacando.
+        while (!lose && rounds<MAX_ROUNDS){ 
+            rounds++;   
             winner = GameCharacter.MONSTER;
             lose = currentPlayer.defend(monster.attack());
             
-            if (!lose){ // Si el jugador no ha muerto
-
-                // Suponemos que el jugador ganará, y continúa este atacando.
+            if (!lose){ 
                 winner = GameCharacter.PLAYER;
                 lose = monster.defend(currentPlayer.attack());
             }
-        } // while (!lose && rounds<MAX_ROUNDS)
-        
+        }
         this.logRounds(rounds, MAX_ROUNDS);
         return winner;
         
     }
     
+    /**
+     * Método que gestiona las recompensas que se producen al finalizar un combate.
+     * Se encarga de actualizar el log con la información de si ha ganado el jugador
+     * o el monstruo.
+     * 
+     * @param winner Tipo de personaje que ha ganado el combate, puede ser un jugador o un monstruo.
+     * @see GameCharacter
+     */
     private void manageReward(GameCharacter winner){
         if(winner==GameCharacter.PLAYER){
             currentPlayer.receiveReward();
@@ -191,7 +232,9 @@ public class Game {
             logMonsterWon();
             
     }
-    
+    /**
+     * Método que gestiona la resurrección de un jugador al finalizar un combate.
+     */
     private void manageResurrection(){
         boolean resurrect=Dice.resurrectPlayer();
         
