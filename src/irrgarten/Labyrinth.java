@@ -344,7 +344,7 @@ public class Labyrinth {
             col=Dice.randomPos(this.nCols);
         }while (!this.emptyPos(row, col));
         
-        int[] output= new int[2]; 
+        int[] output= new int[DIM]; 
         output[ROW]=row;
         output[COL]=col;
         

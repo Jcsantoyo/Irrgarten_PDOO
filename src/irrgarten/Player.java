@@ -8,11 +8,11 @@ import java.util.ArrayList;
  * @author Juan Caballero Santoyo
  */
 public class Player {
-    static final int MAX_WEAPONS=2;
-    static final int MAX_SHIELDS=3;
-    static final int INITIAL_HEALTH=10;
-    static final int HITS2LOSE=3;
-    static final int NO_POS=-1;
+    private static final int MAX_WEAPONS=2;
+    private static final int MAX_SHIELDS=3;
+    private static final int INITIAL_HEALTH=10;
+    private static final int HITS2LOSE=3;
+    private static final int NO_POS=-1;
             
     private String name;
     private char number;
@@ -181,7 +181,7 @@ public class Player {
         final String FORMAT = "%.6f";
         String toReturn=this.name+"["+"i:"+ String.format(FORMAT, this.intelligence) + ", s:"+String.format(FORMAT, this.strength);
         toReturn+=", h:"+String.format(FORMAT, this.health)+", p:("+this.row+", "+this.col+")]";
-        
+        toReturn+=" [ ch:"+this.consecutiveHits+", ";
         // Bucles para mostrar con un formato determinado el array de
         // armas y escudos del jugador
         String toWeapons="[";
@@ -317,19 +317,23 @@ public class Player {
      */
     private boolean manageHit(float receivedAttack){
         
-        if (this.defensiveEnergy() < receivedAttack){
-            this.gotWounded();
-            this.incConsecutiveHits();
+        float defense=defensiveEnergy();
+        if(defense<receivedAttack){
+            gotWounded();
+            incConsecutiveHits();
         }
-        else{
-            this.resetHits();
-        }
-
-        boolean lose = (this.consecutiveHits==Player.HITS2LOSE) || this.dead();
-
-        if (lose)  
+        else
             resetHits();
-
+        
+        boolean lose;
+        
+        if((consecutiveHits==HITS2LOSE) || (dead())){
+            resetHits();
+            lose=true;
+        }
+        else
+            lose=false;
+        
         return lose;
     }
     

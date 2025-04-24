@@ -8,7 +8,7 @@ import java.util.Arrays;  // para mostrar distribuciones en arrays
 public class TestP1 {
     public static void main(String[] args) {
         
-         final int N_PLAYERS = 3;
+         final int N_PLAYERS = 1;
         
          
         TextUI vista = new TextUI();
