@@ -33,7 +33,8 @@ module Irrgarten
       @name=name.to_s
       @intelligence=intelligence.to_f
       @strength=strength.to_f
-      set_pos(@@NO_POS,@@NO_POS)
+      @col=@@NO_POS
+      @row=@@NO_POS
       @health=@@INITIAL_HEALTH
     end
 

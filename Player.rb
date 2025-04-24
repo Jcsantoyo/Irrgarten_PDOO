@@ -36,7 +36,7 @@ module Irrgarten
       @col=@@NO_POS
 
       @consecutive_hits=0
-
+      
       @weapons=Array.new
       @shields=Array.new
     end
@@ -364,7 +364,7 @@ module Irrgarten
 
 
 
-
+  
   
 
   if __FILE__ == $0

@@ -4,7 +4,7 @@ require_relative 'Game'
 module Irrgarten
 
   
-  NUM_JUGADORES = 3
+  NUM_JUGADORES = 1
 
   vista=UI::TextUI.new 
   juego=Game.new(NUM_JUGADORES)

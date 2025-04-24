@@ -20,7 +20,7 @@ module Irrgarten
 
     @@ROW=0
     @@COL=1
-    @@DIM=2
+    
 
     @@NO_POS=-1
 
@@ -361,8 +361,9 @@ module Irrgarten
 
         @players[row][col]=player
         player.set_pos(row,col)
-        return output
+        
       end
+      return output
     end
   end
 
