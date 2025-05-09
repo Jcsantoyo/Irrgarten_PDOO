@@ -7,9 +7,7 @@ package irrgarten;
  * 
  * @author Juan Caballero Santoyo
  */
-public class Shield {
-    private float protection;
-    private int uses;
+public class Shield extends CombatElement {
     
     /**
      * Constructor de la clase Shield
@@ -17,8 +15,7 @@ public class Shield {
      * @param uses El número de usos disponibles del elemento de combate
      */
     public Shield(float protection, int uses){
-        this.protection=protection;
-        this.uses=uses;
+        super(protection,uses);
     }
     
     /**
@@ -26,12 +23,7 @@ public class Shield {
      * @return La intensidad de la protección del escudo.
      */
     public float protect(){
-        float prot=protection;
-        if(uses>0)
-           --uses;
-        else 
-            prot=0;
-        return prot;
+        return this.produceEffect();
     }
      
     /**
@@ -41,17 +33,7 @@ public class Shield {
      */
     @Override
     public String toString(){
-        return "S[" + String.valueOf(protection)+", "+String.valueOf(uses)+"]";
+        return "S" + super.toString();
     }
-    
-    
-    /**
-     * Método que indica si se descartará el escudo en función de sus usos
-     * 
-     * @return devuelve true o false si se descarta o no
-     */
-    public boolean discard(){
-        return Dice.discardElement(uses);
-    }
-    
+   
 }

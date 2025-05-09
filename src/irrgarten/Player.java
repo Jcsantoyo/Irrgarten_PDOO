@@ -7,20 +7,14 @@ import java.util.ArrayList;
  * 
  * @author Juan Caballero Santoyo
  */
-public class Player {
+public class Player extends LabyrinthCharacter {
     private static final int MAX_WEAPONS=2;
     private static final int MAX_SHIELDS=3;
     private static final int INITIAL_HEALTH=10;
     private static final int HITS2LOSE=3;
-    private static final int NO_POS=-1;
             
-    private String name;
     private char number;
     private float intelligence;
-    private float strength;
-    private float health;
-    private int row;
-    private int col;
     private int consecutiveHits=0;
     
     private ArrayList<Weapon> weapons;
@@ -34,19 +28,21 @@ public class Player {
      * @param strength fuerza del jugador
      */
     public Player(char number, float intelligence, float strength){
-        name="Player #"+ number;
+        
+        super(("Player #" + number), intelligence, strength, INITIAL_HEALTH);
         this.number=number;
-        this.intelligence=intelligence;
-        
-        this.strength=strength;
-        health=INITIAL_HEALTH;
-        row=NO_POS;
-        col=NO_POS;
-        
+        consecutiveHits=0;
         weapons=new ArrayList<>();
         shields=new ArrayList<>();
     }
     
+    public Player(Player other){
+        super(other);
+        this.number=other.number;
+        this.consecutiveHits=other.consecutiveHits;
+        this.weapons=other.weapons;
+        this.shields=other.shields;
+    }
     
     /**
      * Resurreción de un jugador, indicando los valores que debe tener
@@ -55,24 +51,8 @@ public class Player {
     public void resurrect() {
        weapons.clear();
        shields.clear();
-       health=INITIAL_HEALTH;
+       this.setHealth(INITIAL_HEALTH);
        resetHits();
-    }
-    
-    /**
-     * Informa sobre la fila del jugador en el tablero
-     * @return Fila de la pos del jugador en el tablero
-     */
-    public int getRow(){
-        return row;
-    }
-    
-    /**
-     * Informa sobre la columna del jugador en el tablero
-     * @return Columna de la pos del jugador en el tablero
-     */
-    public int getCol(){
-        return col;
     }
     
     /**
@@ -84,23 +64,6 @@ public class Player {
     }
     
     
-    /**
-     * Definimos la posición del jugador en el tablero
-     * @param row Fila en el tablero
-     * @param col Columna en el tablero
-     */
-    public void setPos(int row, int col){
-        this.row=row;
-        this.col=col;
-    }
-    
-    /**
-     * Comprueba si está muerto el jugador
-     * @return Devuelve true si está muerto y false en caso contrario
-     */
-    public boolean dead(){
-        return(health<=0);
-    }
     
     /**
      * Comprueba si la dirección pasada hacia la que se pretende desplazar el personaje
@@ -133,8 +96,9 @@ public class Player {
      * de sus armas
      * @return Devuelve la suma de su fuerza y el poder de las armas
      */
+    @Override
     public float attack(){
-        return (strength+sumWeapons());
+        return (this.getStrength()+sumWeapons());
     }
    
     
@@ -145,6 +109,7 @@ public class Player {
      * @return  Devuelve true si el jugador ha muerto y false en caso contrario.
      * @see #manageHit(float)
      */
+    @Override
     public boolean defend(float receivedAttack){
         return manageHit(receivedAttack);
     } 
@@ -167,7 +132,7 @@ public class Player {
             receiveShield(snew);
         }
         int extraHealth=Dice.healthReward();
-        health+=extraHealth;
+        this.setHealth(this.getHealth()+extraHealth);
     }
     
     
@@ -178,12 +143,9 @@ public class Player {
      * @return Representación en forma de cadena de caracteres del estado interno del jugador.
      */
     public String toString(){
-        final String FORMAT = "%.6f";
-        String toReturn=this.name+"["+"i:"+ String.format(FORMAT, this.intelligence) + ", s:"+String.format(FORMAT, this.strength);
-        toReturn+=", h:"+String.format(FORMAT, this.health)+", p:("+this.row+", "+this.col+")]";
-        toReturn+=" [ ch:"+this.consecutiveHits+", ";
-        // Bucles para mostrar con un formato determinado el array de
-        // armas y escudos del jugador
+        
+        String toReturn=super.toString();
+      
         String toWeapons="[";
         int tamWeapons=this.weapons.size();
         for(int i=0; i<tamWeapons-1; i++){
@@ -275,7 +237,7 @@ public class Player {
      * el jugador
      * @return Devuelve la suma de poderes de todas las armas
      */
-    private float sumWeapons(){
+    protected float sumWeapons(){
         float sum=0.0f;
         for(int i=0; i<weapons.size();++i){
             sum+=weapons.get(i).attack();
@@ -289,7 +251,7 @@ public class Player {
      * el jugador
      * @return Devuelve la suma de protección de todas los escudos
      */
-    private float sumShields(){
+    protected float sumShields(){
         float sum=0.0f;
         for(int i=0; i<shields.size();++i){
             sum+=shields.get(i).protect();
@@ -303,7 +265,7 @@ public class Player {
      * la protección de sus escudos
      * @return Devuelve la suma de su inteligencia y la protección de los escudos
      */
-    private float defensiveEnergy(){
+    protected float defensiveEnergy(){
         return (intelligence+sumShields());
     }
     
@@ -344,12 +306,6 @@ public class Player {
         consecutiveHits=0;
     }
     
-    /**
-     * Decrementa en uno la vida del jugador
-     */
-    private void gotWounded(){
-        --health;
-    }
     
     /**
      * Incrementa en una unidad el contador de impactos consecutivos

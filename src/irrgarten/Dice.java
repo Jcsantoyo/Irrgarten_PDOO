@@ -6,6 +6,7 @@ package irrgarten;
  */
 
 import java.util.Random;
+import java.util.ArrayList;
 
 /**
  * Clase que tiene la responsabilidad de tomar todas las decisiones
@@ -142,7 +143,22 @@ public class Dice {
         return generator.nextFloat()<prob;
     }
     
-    /*  Con nextFloat multplicar por el extremo superior, no hacer
+   
+    
+    public static Directions nextStep(Directions preference, 
+                         ArrayList<Directions> validMoves, float intelligence){
+        
+        Directions output=preference;
+        
+        if(Dice.randomIntelligence()>intelligence){
+            int randomIndex=generator.nextInt(validMoves.size());
+            output=validMoves.get(randomIndex);
+        }
+        
+        return output;
+    }
+    
+     /*  Con nextFloat multplicar por el extremo superior, no hacer
         no hacer nextFloat(extremo_sup) 
     */
 }
