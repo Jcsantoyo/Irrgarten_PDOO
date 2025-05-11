@@ -400,4 +400,12 @@ public class Labyrinth {
         return output;
     }
     
+    
+    public void switchToFuzzy(FuzzyPlayer fuzzy){
+        int row=fuzzy.getRow();
+        int col=fuzzy.getCol();
+        if(this.players[row][col].getNumber()==fuzzy.getNumber())
+            players[row][col]=fuzzy;
+    }
+    
 }

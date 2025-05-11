@@ -136,7 +136,7 @@ public class Game {
      */
     private void configureLabyrinth(){
         
-        Monster monster_1=new Monster("Mike Wasowsky", Dice.randomIntelligence(),Dice.randomStrength());
+        Monster monster_1=new Monster("Mike Wasowsky", 1000,1000);
         Monster monster_2=new Monster("Alucard", Dice.randomIntelligence(),Dice.randomStrength());
         Monster monster_3=new Monster("Frankenstein", Dice.randomIntelligence(),Dice.randomStrength());
         lab.addMonster(3, 3, monster_1);
@@ -241,6 +241,10 @@ public class Game {
         if(resurrect){
             currentPlayer.resurrect();
             logResurrected();
+            
+            FuzzyPlayer fuzzy=new FuzzyPlayer(currentPlayer);
+            this.players.set(currentPlayerIndex, fuzzy);
+            lab.switchToFuzzy(fuzzy);
         }
         else{
             logPlayerSkipTurn();
@@ -268,7 +272,7 @@ public class Game {
      * ha ganado resucitado
      */
     private void logResurrected(){
-        this.log+= "- Player "+this.currentPlayerIndex+" resurrected.\n";
+        this.log+= "- Player "+this.currentPlayerIndex+" resurrected as Fuzzy.\n";
     }
     
     /**

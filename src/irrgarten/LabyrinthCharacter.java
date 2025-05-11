@@ -8,7 +8,7 @@ package irrgarten;
  *
  * @author juan
  */
-public abstract class LabyrinthCharacter {
+abstract  class LabyrinthCharacter {
     private String name;
     private float intelligence;
     private float strength;

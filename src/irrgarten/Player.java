@@ -20,6 +20,9 @@ public class Player extends LabyrinthCharacter {
     private ArrayList<Weapon> weapons;
     private ArrayList<Shield> shields;
     
+    private ShieldCardDeck shieldDeck;
+    private WeaponCardDeck weaponDeck;
+    
     
     /**
      * Constructor de la clase Player
@@ -34,6 +37,9 @@ public class Player extends LabyrinthCharacter {
         consecutiveHits=0;
         weapons=new ArrayList<>();
         shields=new ArrayList<>();
+        
+        shieldDeck=new ShieldCardDeck();
+        weaponDeck=new WeaponCardDeck();
     }
     
     public Player(Player other){
@@ -42,6 +48,8 @@ public class Player extends LabyrinthCharacter {
         this.consecutiveHits=other.consecutiveHits;
         this.weapons=other.weapons;
         this.shields=other.shields;
+        this.shieldDeck=other.shieldDeck;
+        this.weaponDeck=other.weaponDeck;
     }
     
     /**
@@ -218,7 +226,7 @@ public class Player extends LabyrinthCharacter {
      * @return Devuelve el arma creada de forma aleatoria con el dado
      */
     private Weapon newWeapon(){
-        return (new Weapon(Dice.weaponPower(),Dice.usesLeft()));
+        return this.weaponDeck.nextCard();
     }
     
     
@@ -228,7 +236,7 @@ public class Player extends LabyrinthCharacter {
      * @return Devuelve el escudo creado de forma aleatoria con el dado
      */
     private Shield newShield(){
-        return (new Shield(Dice.shieldPower(),Dice.usesLeft()));
+        return this.shieldDeck.nextCard();
     }
     
     
