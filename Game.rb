@@ -20,6 +20,9 @@ module Irrgarten
     @@COLS=7
 
 
+    @@EXIT_ROW
+    @@EXIT_COL 
+
     # Inicializa una nueva instancia del juego.
     #
     # Se crea el laberinto con una salida en una posición aleatoria, se instancian los jugadores,
@@ -28,8 +31,8 @@ module Irrgarten
     # @param [Integer] nplayers Número de jugadores de la partida.
     # @return [Game] La instancia del juego inicializada.
     def initialize(nplayers)
-      exit_row=Dice.random_pos(@@ROWS)
-      exit_col=Dice.random_pos(@@COLS)
+      @@EXIT_ROW=Dice.random_pos(@@ROWS)
+      @@EXIT_COL=Dice.random_pos(@@COLS)
 
       @players = Array.new
       @monsters = Array.new
@@ -43,7 +46,7 @@ module Irrgarten
       
       @log = "-Game just started. \n "
       
-      @lab=Labyrinth.new(@@ROWS,@@COLS,exit_row,exit_col)
+      @lab=Labyrinth.new(@@ROWS,@@COLS,@@EXIT_ROW,@@EXIT_COL)
       configure_labyrinth()
       @lab.spread_players(@players)
 

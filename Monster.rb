@@ -1,6 +1,6 @@
-require_relative 'Dice' #Para attack
+require_relative 'LabyrinthCharacter'
 
-module Irrgarten
+module Irrgarten 
 
   # La clase Monster representa a un monstruo en el juego que puede atacar, defenderse y recibir
   # daño durante los combates. Maneja atributos como nombre, inteligencia, fuerza, posición (fila y columna)
@@ -12,39 +12,14 @@ module Irrgarten
   #
   # @author Juan Caballero Santoyo
 
-  class Monster
+  class Monster < LabyrinthCharacter
 
     # Salud inicial asignada a cada monstruo.
     @@INITIAL_HEALTH=5
 
-    # Valor para posición no asignada.
-    @@NO_POS=-1
-
-
-    # Inicializa una nueva instancia de Monster.
-    #
-    # Convierte el nombre recibido a cadena, y los valores de inteligencia y fuerza a flotantes.
-    # Establece la posición inicial utilizando @@NO_POS y asigna la salud inicial.
-    #
-    # @param [String, #to_s] name El nombre del monstruo.
-    # @param [Numeric] intelligence La inteligencia del monstruo, que se utiliza para calcular la defensa.
-    # @param [Numeric] strength La fuerza del monstruo, que se utiliza para calcular el ataque.
     def initialize(name,intelligence,strength)
-      @name=name.to_s
-      @intelligence=intelligence.to_f
-      @strength=strength.to_f
-      @col=@@NO_POS
-      @row=@@NO_POS
-      @health=@@INITIAL_HEALTH
+      super(name,intelligence,strength,@@INITIAL_HEALTH)
     end
-
-    # Verifica si el monstruo está muerto.
-    #
-    # @return [Boolean] Retorna true si la salud del monstruo es 0, false en caso contrario.
-    def dead
-      return @health<=0
-    end
-
 
     # Realiza un ataque calculando la intensidad basado en la fuerza del monstruo.
     #
@@ -81,41 +56,7 @@ module Irrgarten
       return is_dead
     end
 
-
-    # Establece la posición del monstruo en el tablero de juego.
-    #
-    # @param [Integer] row La fila en la que se ubicará el monstruo.
-    # @param [Integer] col La columna en la que se ubicará el monstruo.
-    def set_pos(row, col)
-      @row=row
-      @col=col
-    end
-
-
-
-    # Retorna una representación en cadena de los atributos del monstruo.
-    #
-    # El formato incluye el nombre, la inteligencia, la fuerza, la vida y la posición actual.
-    #
-    # @return [String] Una cadena que resume los atributos del monstruo.
-    def to_s
-      formato = "%.2f"  # Formato para números decimales
-      cad_1="#{@name}[i:#{format(formato,@intelligence)}, s:#{format(formato,@strength)}, "+"h:#{format(formato,@health)}, p:(#{@row}, #{@col})]"
-    end
-
-
-
-    private
-
-    
-    # Aplica daño al monstruo reduciendo su salud en 1.
-    #
-    # Este método es invocado internamente cuando la defensa del monstruo falla en evitar un ataque.
-    #
-    # @return [void]
-    def got_wounded
-      @health -= 1
-    end
+    public_class_method :new
 
   end
 

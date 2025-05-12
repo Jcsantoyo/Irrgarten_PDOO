@@ -1,4 +1,4 @@
-require_relative 'Dice'
+require_relative 'CombatElement'
 
 module Irrgarten
 
@@ -8,17 +8,9 @@ module Irrgarten
   # @author Juan Caballero Santoyo
 
 
-  class Weapon
+  class Weapon < CombatElement
 
-    # Crea una nueva instancia de Weapon.
-    #
-    # @param [Integer] power La potencia o valor de ataque que proporciona el arma.
-    # @param [Integer] uses  El número de usos disponibles para el arma.
-    
-    def initialize(power ,uses)
-      @power=power
-      @uses=uses
-    end
+   
 
     # Ejecuta un ataque utilizando el arma.
     #
@@ -29,16 +21,7 @@ module Irrgarten
     # @return [Integer] El valor del ataque, que corresponde a la potencia del arma o 0 si no hay usos.
 
     def attack
-      attack=@power
-
-      if @uses > 0
-        @uses-=1
-
-      else
-        attack=0
-      end
-
-      return attack
+      self.produce_effect
     end
 
     # Retorna una representación en cadena del arma.
@@ -49,23 +32,10 @@ module Irrgarten
     # @return [String] La representación textual del arma.
 
     def to_s
-      "W[#{@power}, #{@uses}]"
+      return "W" + super
     end
 
-
-    # Desecha el arma utilizando la funcionalidad de la clase Dice.
-    #
-    # Este método invoca el método de clase Dice.discard_element pasándole el número
-    # de usos actuales del arma, lo que permite realizar una acción asociada al descarte
-    # del arma en el contexto del juego.
-    #
-    # @return [Object] El resultado de la operación de descarte proporcionada por Dice.
-
-    def discard
-      return Dice.discard_element(@uses)
-    end
-
-
+    public_class_method :new
   end
 
 end

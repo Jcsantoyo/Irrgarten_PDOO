@@ -116,6 +116,16 @@ module Irrgarten
         return (@@generator.rand >= probabilidad)
     end
 
+
+    def self.next_step(preference, valid_moves,intelligence)
+      output=preference
+      if(Dice.random_intelligence>intelligence)
+        random_index=@@generator.rand(valid_moves.size)
+        output=valid_moves[random_index]
+      end
+      return output
+    end
+    
   end
   
 end

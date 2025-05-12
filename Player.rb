@@ -1,6 +1,7 @@
 require_relative 'Weapon' #Para contenedores de Weapon
 require_relative 'Shield' #Para contenedores de Shield
 require_relative 'Directions' #Para move
+require_relative 'LabyrinthCharacter'
 
 
 module Irrgarten
@@ -10,7 +11,7 @@ module Irrgarten
   #
   # @author Juan Caballero Santoyo
  
-  class Player
+  class Player < LabyrinthCharacter
 
     @@MAX_WEAPONS=2 # Número máximo de armas que puede tener un jugador
     @@MAX_SHIELDS=3 # Número máximo de escudos que puede tener un jugador

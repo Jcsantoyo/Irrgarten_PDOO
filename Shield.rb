@@ -1,5 +1,4 @@
-require_relative 'Dice' #Para discard
-
+require_relative 'CombatElement'
 module Irrgarten
 
   # La clase Shield representa un escudo utilizado en combate para proteger al jugador.
@@ -8,17 +7,7 @@ module Irrgarten
   # Además, provee la funcionalidad para ejecutar la acción de descarte (discard) a través de la clase Dice.
   #
   # @author Juan Caballero Santoyo
-  class Shield
-
-    
-    # Inicializa una nueva instancia del escudo.
-    #
-    # @param [Integer] protection El valor de protección que ofrece el escudo.
-    # @param [Integer] uses   La cantidad de usos disponibles para el escudo.
-    def initialize(protection,uses)
-      @protection=protection
-      @uses=uses
-    end
+  class Shield < CombatElement
 
 
     # Realiza una acción de protección con el escudo.
@@ -28,17 +17,7 @@ module Irrgarten
     #
     # @return [Integer] El valor de protección aplicado o 0 si no hay usos restantes.
     def protect
-      prot=@protection
-
-      if @uses > 0
-        @uses-=1
-
-      else
-        prot=0
-
-      end
-
-      return prot
+      self.produce_effect
     end
 
 
@@ -49,20 +28,10 @@ module Irrgarten
     #
     # @return [String] La representación textual del escudo.
     def to_s
-      "S[#{@protection}, #{@uses}]"
+      return "S"+super
     end
     
-  
-    # Desecha el escudo utilizando la funcionalidad definida en Dice.
-    #
-    # Este método delega la operación de descarte al método de clase `discard_element` de Dice, pasándole
-    # el número de usos actuales del escudo.
-    #
-    # @return [Object] El resultado retornado por Dice.discard_element.
-    def discard
-      return Dice.discard_element(@uses)
-    end
-
+    public_class_method :new
   end
 
 end
