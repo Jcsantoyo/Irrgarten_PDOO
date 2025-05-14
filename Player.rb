@@ -17,7 +17,6 @@ module Irrgarten
     @@MAX_SHIELDS=3 # Número máximo de escudos que puede tener un jugador
     @@INITIAL_HEALTH=10 # Salud inicial de los jugadores
     @@HITS2LOSE=3 # Número de golpes que puede recibir un jugador antes de morir
-    @@NO_POS=-1     # Valor para posición no asignada.
 
 
 
@@ -27,20 +26,38 @@ module Irrgarten
     # @param [Numeric] intelligence Valor de la inteligencia del jugador, que influye en la defensa.
     # @param [Numeric] strength Valor de la fuerza del jugador, que influye en el ataque.
     def initialize(number,intelligence,strength)
-      @name= "Player #{number}"
+      
+      super("Player #{number}", intelligence, strength, @@INITIAL_HEALTH)
       @number=number.to_s
-      @intelligence=intelligence
-      @strength=strength
-      @health=@@INITIAL_HEALTH
-
-      @row=@@NO_POS
-      @col=@@NO_POS
 
       @consecutive_hits=0
       
       @weapons=Array.new
       @shields=Array.new
     end
+
+    attr_reader :number
+
+    protected
+
+    attr_reader :weapons
+
+    attr_reader :shields
+
+    attr_reader :consecutive_hits
+
+
+
+    public 
+
+    def copy(other)
+      super
+      @number=other.number
+      @weapons=other.weapons
+      @shields=other.shields
+      @consecutive_hits=other.consecutive_hits
+    end
+
 
 
     # Resucita al jugador, reiniciando armas, escudos, salud y contador de golpes consecutivos.
@@ -51,48 +68,6 @@ module Irrgarten
       @shields.clear
       @health=@@INITIAL_HEALTH
       reset_hits()
-    end
-
-    # Retorna la fila actual del jugador en el tablero.
-    #
-    # @return [Integer] La fila actual.
-    def row
-      @row
-    end
-
-
-    # Retorna la columna actual del jugador en el tablero.
-    #
-    # @return [Integer] La columna actual.
-    def col
-      @col
-    end
-
-
-    # Retorna el número identificador del jugador en forma de cadena.
-    #
-    # @return [String] El número del jugador.
-    def number
-      @number
-    end
-
-
-    # Establece la posición del jugador en el tablero.
-    #
-    # @param [Integer] row La fila donde se ubicará el jugador.
-    # @param [Integer] col La columna donde se ubicará el jugador.
-    # @return [void]
-    def set_pos(row,col)
-      @row=row
-      @col=col
-    end
-
-
-    # Determina si el jugador está muerto.
-    #
-    # @return [Boolean] true si la salud es menor o igual a 0, false en caso contrario.
-    def dead
-      return @health<=0
     end
 
 
@@ -151,9 +126,6 @@ module Irrgarten
     # @return [String] La representación textual del jugador.
     def to_s
 
-      formato = "%.2f"  # Formato para números decimales
-      cad_1="#{@name}[i:#{format(formato,@intelligence)}, s:#{format(formato,@strength)}, "+"h:#{format(formato,@health)}, p:(#{@row}, #{@col})]"
-
       # Guardamos la info de todas las armas en un string
       to_weapons="["
       tam_weapons=@weapons.size
@@ -178,9 +150,7 @@ module Irrgarten
       end
       to_shields+="]"
 
-      return cad_1 + " [ ch:#{@consecutive_hits}, w:"+to_weapons+", sh:"+to_shields + " ]"
-
-     
+      return super + " [ ch:#{@consecutive_hits}, w:"+to_weapons+", sh:"+to_shields + " ]"
     end
 
 
@@ -275,6 +245,7 @@ module Irrgarten
       return Shield.new(Dice.shield_power,Dice.uses_left)
     end 
 
+    protected
 
     # Calcula la suma de los valores de ataque aportados por todas las armas del jugador.
     #
@@ -308,7 +279,7 @@ module Irrgarten
       return (@intelligence+sum_shields())
     end
 
-
+    private
 
     # Administra un golpe recibido por el jugador, determinando si éste debe perder.
     #
@@ -346,14 +317,6 @@ module Irrgarten
       @consecutive_hits=0
     end
 
-
-    # Aplica daño al jugador, reduciendo su salud en 1.
-    #
-    # @return [void]
-    def got_wounded
-      @health-=1
-    end
-
     # Incrementa el contador de golpes consecutivos recibidos por el jugador.
     #
     # @return [void]
@@ -361,6 +324,8 @@ module Irrgarten
       @consecutive_hits+=1
     end
     
+    public_class_method :new
+
   end
 
 

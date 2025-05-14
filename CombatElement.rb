@@ -21,7 +21,7 @@ module Irrgarten
 
     public
 
-    def Discard
+    def discard
       return Dice.discard_element(@uses)
     end
 

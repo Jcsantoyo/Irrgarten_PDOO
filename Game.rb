@@ -136,7 +136,7 @@ module Irrgarten
     # @return [void]
     def configure_labyrinth
 
-      monster_1=Monster.new("Mike Wasowsky",Dice.random_intelligence,Dice.random_strength)
+      monster_1=Monster.new("Mike Wasowsky",1000,1000)
       monster_2=Monster.new("Alucard",Dice.random_intelligence,Dice.random_strength)
       monster_3=Monster.new("Frankenstein",Dice.random_intelligence,Dice.random_strength)
 
@@ -250,6 +250,10 @@ module Irrgarten
       if(resurrect)
         @current_player.resurrect
         log_resurrected()
+
+        fuzzy=FuzzyPlayer.new(@current_player)
+        @players[@current_player_index]=fuzzy
+        @lab.switch_to_fuzzy(fuzzy)
       else
         log_player_skip_turn()
       end
@@ -275,7 +279,7 @@ module Irrgarten
     #
     # @return [void]
     def log_resurrected
-        @log += "- Player #{@current_player_index} resurrected.\n"
+        @log += "- Player #{@current_player_index} resurrected as fuzzy.\n"
     end
 
     # Registra en el log que el jugador perdió su turno (estaba muerto).

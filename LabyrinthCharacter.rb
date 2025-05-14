@@ -13,13 +13,16 @@ module Irrgarten
 
       @row = @@NO_POS
       @col = @@NO_POS
-  end
+    end
+
+
+    public
 
     def copy(other)
-      @name=other.name
-      @intelligence=other.intelligence
-      @strength=other.strength
-      @health=other.health
+      @name = other.name
+      @intelligence = other.intelligence
+      @strength = other.strength
+      @health = other.health
       @row=other.row
       @col=other.col
     end
@@ -32,7 +35,7 @@ module Irrgarten
     attr_reader :col
 
     protected
-
+    attr_reader :name
     attr_reader :intelligence
     attr_reader :strength
     attr_accessor :health
