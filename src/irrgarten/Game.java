@@ -136,7 +136,7 @@ public class Game {
      */
     private void configureLabyrinth(){
         
-        Monster monster_1=new Monster("Mike Wasowsky", 1000,1000);
+        Monster monster_1=new Monster("Mike Wasowsky", Dice.randomIntelligence(),Dice.randomStrength());
         Monster monster_2=new Monster("Alucard", Dice.randomIntelligence(),Dice.randomStrength());
         Monster monster_3=new Monster("Frankenstein", Dice.randomIntelligence(),Dice.randomStrength());
         lab.addMonster(3, 3, monster_1);
