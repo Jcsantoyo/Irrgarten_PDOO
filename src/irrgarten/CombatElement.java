@@ -1,23 +1,34 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package irrgarten;
 
 /**
  *
- * @author juan
+ * Clase que representa los elementos de combate que utiliza el jugador durante 
+ * los combates a lo largo del juego.
+ * 
+ * @author Juan Caballero Santoyo
  */
 abstract class CombatElement {
     
     private float effect;
     private int uses;
     
+    
+    /**
+    * Constructor de la clase abstracta CombatElement
+    * @param effect Efecto del elemento de combate
+    * @param uses El número de usos disponibles del elemento de combate
+    */
     public CombatElement(float effect,int uses){
         this.effect=effect;
         this.uses=uses;
     }
     
+    /**
+     * Método para realizar el efecto correspondiente al elemento de combate,
+     * se reduce en uno su uso.
+     * @return La intensidad del efecto de dicho elemento de combate.
+     */
     protected float produceEffect(){
         float efecto=effect;
         if(uses>0)
@@ -27,10 +38,20 @@ abstract class CombatElement {
         return efecto;
     }
     
+    /**
+    * Método que indica si se descartará el elemento de combate en función de
+    * sus usos
+    * @return devuelve true o false si se descarta o no
+    */
     public boolean discard(){
         return Dice.discardElement(uses);
     }
     
+    /**
+     * Método que devuelve una representación en forma de cadena de caracteres
+     * del estado interno del elemento de combate.
+     * @return Representación en forma de cadena de caracteres del estado interno del elemento de combate.
+     */
     @Override
     public String toString(){
         return "[" + String.valueOf(effect)+", "+String.valueOf(uses)+"]"; 

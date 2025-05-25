@@ -144,7 +144,14 @@ public class Dice {
     }
     
    
-    
+    /**
+     * En función de la inteligencia dada, devolverá, con más probabilidad si intelligence es mayor,
+     * preferencey ,con menos, una dirección aleatoria de validMoves
+     * @param preference Dirección preferida hacia la que moverse
+     * @param validMoves Direcciones posibles para moverse
+     * @param intelligence Inteligencia del jugador
+     * @return Dirección elegida hacia la que moverse
+     */
     public static Directions nextStep(Directions preference, 
                          ArrayList<Directions> validMoves, float intelligence){
         

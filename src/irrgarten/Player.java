@@ -35,6 +35,7 @@ public class Player extends LabyrinthCharacter {
         super(("Player #" + number), intelligence, strength, INITIAL_HEALTH);
         this.number=number;
         consecutiveHits=0;
+        
         weapons=new ArrayList<>();
         shields=new ArrayList<>();
         
@@ -42,12 +43,18 @@ public class Player extends LabyrinthCharacter {
         weaponDeck=new WeaponCardDeck();
     }
     
+    /**
+     * Consctructor de copia
+     * @param other Objeto que copiar
+     */
     public Player(Player other){
         super(other);
         this.number=other.number;
         this.consecutiveHits=other.consecutiveHits;
+        
         this.weapons=other.weapons;
         this.shields=other.shields;
+        
         this.shieldDeck=other.shieldDeck;
         this.weaponDeck=other.weaponDeck;
     }

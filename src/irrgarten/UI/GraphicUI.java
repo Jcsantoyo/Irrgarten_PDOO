@@ -1,18 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package irrgarten.UI;
 
 import irrgarten.Directions;
 import irrgarten.GameState;
 
 /**
- *
- * @author juan
+ * Interfaz de usuario gráfica. Implementa la interfaz UI.
+ * 
+ * 
+ * @author Juan Caballero Santoyo
  */
 public class GraphicUI extends javax.swing.JFrame implements UI{
 
+    
+      
+    /**
+     * Cursor para seleccionar la dirección en la que se moverá el jugador
+     */
     private Cursors cursors;
     
     /**

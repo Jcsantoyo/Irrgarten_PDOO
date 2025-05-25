@@ -7,18 +7,30 @@ package irrgarten.UI;
 import irrgarten.Directions;
 
 /**
- *
- * @author juan
+ * Clase que representa una ventana emergente que permite al usuario elegir la
+ * dirección en la que moverse.
+ * 
+ * 
+ * @author Juan Caballero Santoyo
  */
 public class Cursors extends javax.swing.JDialog {
     
-    
+     /**
+     * Dirección en la que se moverá el jugador
+     */
     private Directions direction;
     
+       
+    /**
+     * Obtiene la dirección en la que se moverá el jugador
+     * 
+     * @return Dirección en la que se moverá el jugador
+     */
     public Directions getDirection(){
         setVisible(true);
         return direction;
     }
+    
     /**
      * Creates new form Cursors
      */

@@ -27,7 +27,7 @@ public class Game {
     private static final int COLS=7;
     
     
-     /**
+    /**
      * Constructor de la clase Game, que inicializará los jugadores a jugar 
      * (definiendo el jugador que inicia la partida) y el estado del laberinto, 
      * que incluye su propia construcción, es decir, definir los bloques,

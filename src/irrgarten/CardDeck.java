@@ -1,29 +1,53 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package irrgarten;
 
 import java.util.ArrayList;
 import java.util.Collections;
         
 /**
- *
- * @author juan
+ * Clase parametrizable y abstracta de la baraja de cartas del juego.
+ * 
+ * @author Juan Caballero Santoyo
  */
+
 abstract class CardDeck <T extends CombatElement>   {
+    
     private ArrayList<T> cardDeck;
     
     protected static final int MAX_TAM=40;
     
+    
+    /**
+     * Constructor de la clase parametrizable CardDeck
+    */
     public CardDeck(){
         cardDeck=new ArrayList<>();
     }
+    
+    /**
+     * Método que añade todas las cartas del tipo corresopndiente a la baraja
+     * delegando parate de su funcionalidad en el método addCards()
+     */
     protected abstract void addCards();
     
+    
+    /**
+     * Método que añade una carte del tipo correspondiente al contenedor
+     * @param card Carta a añadir al contenedor
+    */
     protected void addCard(T card){
         cardDeck.add(card);
     }
+    
+    
+    /**
+     * Método que devuelve la primera carta del tipo correspondiente de la 
+     * baraja de cartas. Si la baraja está vacía se llama a addCards y se baraja.
+     * Destacar el uso de <b>Collections.shuffle(array)</b> para barajar el array
+     * pasado como argumento.
+     * 
+     * @return Primera carta de la baraja.
+     */
     public T nextCard(){
         if(cardDeck.size()<=0){
             addCards();

@@ -400,7 +400,12 @@ public class Labyrinth {
         return output;
     }
     
-    
+    /**
+     * Método para cambiar un jugador del laberinto por un fuzzyplayer en su 
+     * posición.
+     * @param fuzzy Objeto de FuzzyPlayer que sustituirá al objeto Player que haya
+     * en su posición
+     */
     public void switchToFuzzy(FuzzyPlayer fuzzy){
         int row=fuzzy.getRow();
         int col=fuzzy.getCol();

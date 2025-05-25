@@ -1,20 +1,31 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package irrgarten.UI;
 
 import irrgarten.Directions;
 import irrgarten.GameState;
 
 /**
- *
- * @author juan
+ * Interfaz que define los métodos que debe implementar una clase que se encargue
+ * de la interacción con el usuario.
+ * 
+ * @author Juan Caballero Santoyo
  */
 public interface UI {
     
+    /**
+     * Método que recibe las ordenes del jugador para desplazarse.
+     * @return Dirección hacia la que desea desplazarse el jugador
+     */
     public Directions nextMove();
     
+    
+    /**
+     * Método que muestra el estado completo del juego, mostrándo el laberinto,
+     * los monstruos, los jugadores, mensaje con eventos importantes y si ha habido
+     * un ganador.
+     * 
+     * @param gameState estado actual del juego
+     */
     public void showGame(GameState gameState);
     
 }
