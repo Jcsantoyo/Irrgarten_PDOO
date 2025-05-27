@@ -8,7 +8,6 @@ module Irrgarten
   #
   # Se definen dos variables de clase:
   # - @@INITIAL_HEALTH: Salud inicial asignada a cada monstruo.
-  # - @@NO_POS: Valor por defecto que indica que la posición aún no ha sido asignada.
   #
   # @author Juan Caballero Santoyo
 

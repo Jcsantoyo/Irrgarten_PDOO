@@ -50,6 +50,12 @@ module Irrgarten
 
     public 
 
+
+    # Método que busca asemejarse a un constructor de copia.
+    # Copia los atributos de un jugador a otro.
+    #
+    # @param other [Player] jugador al que se quiere copiar
+    # @note Al terminar se copian los atributos del jugador **other** al jugador que llama al método
     def copy(other)
       super
       @number=other.number
